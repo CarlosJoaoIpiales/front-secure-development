@@ -1,0 +1,144 @@
+<div class="grid">
+    <div class="col-12 md:col-6">
+        <p-toast></p-toast>
+        <div class="card p-fluid">
+            <h5>Dispositivos</h5>
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-12 md:col-6">
+                    <div class="field col card justify-center">
+                        <h5>Medidores</h5>
+                        <p-chart type="pie" [data]="metersData" [options]="metersOptions"></p-chart>
+                        <h5>Total: {{ totalMeters }}</h5>
+                    </div>
+                </div>
+                <div class="field col-12 md:col-6">
+                    <div class="field col card justify-center">
+                        <h5>Gateways</h5>
+                        <p-chart type="pie" [data]="gatewaysData" [options]="gatewaysOptions"></p-chart>
+                        <h5>Total: {{ totalGateways }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card p-fluid">
+            <h5>Medidores Registrados</h5>
+            <google-map width="100%" height="100%" [center]="center" [zoom]="zoom" [options]="mapOptions">
+                <map-marker *ngFor="let marker of markerPositions" [position]="marker.position" [title]="marker.title"
+                    [options]="markerOptions" (onOverlayClick)="handleOverlayClick($event)">
+                </map-marker>
+            </google-map>
+        </div>
+    </div>
+    <div class="col-12 md:col-6">
+        <div class="card p-fluid">
+            <div class="flex align-items-center justify-content-between mb-4">
+                <h5>Mensajes de Comunicación</h5>
+                <div>
+                    <button pButton type="button" icon="pi pi-ellipsis-v"
+                        class="p-button-rounded p-button-text p-button-plain" (click)="menu.toggle($event)"></button>
+                    <p-menu #menu [popup]="true" [model]="items"></p-menu>
+                </div>
+            </div>
+
+            <span class="block text-600 font-medium mb-3">HOY</span>
+            <ul class="p-0 mx-0 mt-0 mb-4 list-none">
+                <li class="flex align-items-center py-2 border-bottom-1 surface-border">
+                    <div
+                        class="w-3rem h-3rem flex align-items-center justify-content-center bg-orange-100 border-circle mr-3 flex-shrink-0">
+                        <i class="pi pi-exclamation-triangle text-xl text-orange-500"></i>
+                    </div>
+                    <span class="text-900 line-height-3">Richard Jones
+                        <span class="text-700"> has purchased a blue t-shirt for <span
+                                class="text-blue-500">79$</span></span>
+                    </span>
+                </li>
+                <li class="flex align-items-center py-2 border-bottom-1 surface-border">
+                    <div
+                        class="w-3rem h-3rem flex align-items-center justify-content-center bg-orange-100 border-circle mr-3 flex-shrink-0">
+                        <i class="pi pi-exclamation-triangle text-xl text-orange-500"></i>
+                    </div>
+                    <span class="text-900 line-height-3">Richard Jones
+                        <span class="text-700"> has purchased a blue t-shirt for <span
+                                class="text-blue-500">79$</span></span>
+                    </span>
+                </li>
+            </ul>
+
+            <span class="block text-600 font-medium mb-3">AYER</span>
+            <ul class="p-0 m-0 list-none">
+                <li class="flex align-items-center py-2 border-bottom-1 surface-border">
+                    <div
+                        class="w-3rem h-3rem flex align-items-center justify-content-center bg-orange-100 border-circle mr-3 flex-shrink-0">
+                        <i class="pi pi-exclamation-triangle text-xl text-orange-500"></i>
+                    </div>
+                    <span class="text-900 line-height-3">Richard Jones
+                        <span class="text-700"> has purchased a blue t-shirt for <span
+                                class="text-blue-500">79$</span></span>
+                    </span>
+                </li>
+                <li class="flex align-items-center py-2 border-bottom-1 surface-border">
+                    <div
+                        class="w-3rem h-3rem flex align-items-center justify-content-center bg-orange-100 border-circle mr-3 flex-shrink-0">
+                        <i class="pi pi-exclamation-triangle text-xl text-orange-500"></i>
+                    </div>
+                    <span class="text-900 line-height-3">Richard Jones
+                        <span class="text-700"> has purchased a blue t-shirt for <span
+                                class="text-blue-500">79$</span></span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <div class="card p-fluid">
+            <h5>Consumo Promedio</h5>
+            <div class="field">
+                <label htmlFor="name1">/* Aqui iria el consumo promedio*/</label>
+            </div>
+        </div>
+        <div class="card p-fluid">
+            <h5>Curva de Consumo Promedio</h5>
+            <div class="field">
+                <p-chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h5>Últimos Mensajes de Comunicación</h5>
+        <p-dataView #dv [value]="messages.slice(0, 5)">
+            <ng-template pTemplate="list" let-messages>
+                <div class="grid grid-nogutter">
+                    <div class="col-12" *ngFor="let item of messages.slice(0, 5); let first = first" class="col-12">
+                        <div class="flex flex-column sm:flex-row sm:align-items-center p-4 gap-3"
+                            [ngClass]="{ 'border-top-1 surface-border': !first }">
+                            <div
+                                class="flex flex-column md:flex-row justify-content-between md:align-items-center flex-1 gap-4">
+                                <div
+                                    class="flex flex-row md:flex-column justify-content-between align-items-start gap-2">
+                                    <div
+                                        class="w-3rem h-3rem flex align-items-center justify-content-center bg-orange-100 border-circle mr-3 flex-shrink-0">
+                                        <i class="pi pi-exclamation-triangle text-xl text-orange-500"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-secondary text-sm">Código:</span>
+                                        <div class="text-lg font-medium text-900 mt-2">{{ item.unique_key }}</div>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-secondary text-sm">Fecha y hora:</span>
+                                        <div class="text-lg font-medium text-900 mt-2">{{ item.created_at }}</div>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-secondary text-sm">Nombre:</span>
+                                        <div class="text-lg font-medium text-900 mt-2">{{ item.name }}</div>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-secondary text-sm">Dev EUI:</span>
+                                        <div class="text-lg font-medium text-900 mt-2">{{ item.dev_eui }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </p-dataView>
+    </div>
+</div>
