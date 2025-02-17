@@ -13,6 +13,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from "primeng/dropdown";
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputTextareaModule } from "primeng/inputtextarea";
 import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from "ng-recaptcha";
 
 @NgModule({
@@ -30,7 +31,8 @@ import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from "ng-recaptcha";
         InputNumberModule,
         CalendarModule,
         DropdownModule,
-        RadioButtonModule
+        RadioButtonModule,
+        InputTextareaModule,
     ],
     declarations: [RegisterComponent],
     providers: [{ provide: RECAPTCHA_V3_SITE_KEY, useValue: "6LdT5tIqAAAAAFG7DsKYLngArURqxdZMGLI42QMX" }],
