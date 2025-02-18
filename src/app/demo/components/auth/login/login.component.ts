@@ -31,7 +31,8 @@ export class LoginComponent {
     ) { }
 
     login() {
-        this.userService.login(this.email).subscribe(
+        this.router.navigate(['/user-dashboard']);
+        /*this.userService.login(this.email).subscribe(
             response => {
                 if (response.id && response.password) {
                     const decryptedPassword = this.encryptionService.decrypt(response.password);
@@ -54,7 +55,7 @@ export class LoginComponent {
                     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error inesperado', life: 3000 });
                 }
             }
-        );
+        );*/
     }
     registerAccount() {
         this.router.navigate(['/auth/register']);

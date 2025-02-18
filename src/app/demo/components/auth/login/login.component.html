@@ -1,13 +1,11 @@
 <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
     <div class="flex flex-column align-items-center justify-content-center">
-        <img src="assets/logo/Logos_m3_verificaciones_final_Mesa_de_trabajo_1.png" alt="M3 Verificaciones logo"
-            class="mb-5 w-6rem flex-shrink-0">
         <p-toast></p-toast>
         <div
-            style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
+            style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%); margin-top: 20px;">
             <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius:53px">
                 <div class="text-center mb-5">
-                    <img src="assets/logo/Logos_sociedad_comercial_hidro_final.png" alt="Logo" height="150"
+                    <img src="assets/logo/logo.webp" alt="Logo" height="150"
                         class="mb-3">
                     <div class="text-900 text-3xl font-medium mb-3">Bienvenido</div>
                     <span class="text-600 font-medium">Ingrese para continuar</span>
@@ -30,7 +28,7 @@
                             style="color: var(--primary-color)">¿Perdiste tu contraseña?</a>
                     </div>
                     <button pButton pRipple label="Ingresar" class="w-full p-3 text-xl" (click)="login()"></button>
-                    <button pButton pRipple label="Registrarse" class="w-full p-3 text-xl" (click)="registerAccount()"></button>
+                    <button pButton pRipple label="Registrarse" class="w-full p-3 text-xl" (click)="registerAccount()" style="margin-top: 10px;"></button>
                 </div>
             </div>
         </div>

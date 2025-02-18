@@ -17,29 +17,21 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Inicio',
                 items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dashboard'] }
+                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/user-dashboard'] }
                 ]
             },
             {
-                label: 'Dispositivos',
+                label: 'Servicios',
                 items: [
-                    { label: 'Medidores', icon: 'pi pi-fw pi-bolt', routerLink: ['/devices/meter'] },
-                    { label: 'Gateways', icon: 'pi pi-fw pi-mobile', routerLink: ['/devices/gateway'] },
+                    { label: 'Prestamos', icon: 'pi pi-fw pi-mobile', routerLink: ['/loans'] },
+                    { label: 'Pagos de Prestaos', icon: 'pi pi-fw pi-bolt', routerLink: ['/devices/meter'] },
+                    
                 ]
             },
             {
-                label: 'Cuentas',
+                label: 'Perfil',
                 items: [
-                    { label: 'Empresas', icon: 'pi pi-fw pi-building', routerLink: ['/accounts/company'] },
-                    { label: 'Usuarios', icon: 'pi pi-fw pi-users', routerLink: ['/accounts/user'] },
-                ]
-            },
-            {
-                label: 'Análisis',
-                items: [
-                    { label: 'Consumo', icon: 'pi pi-fw pi-chart-line', routerLink: ['/analytics/consumption'] },
-                    { label: 'Mensajes de comunicación', icon: 'pi pi-fw pi-comments', routerLink: ['/analytics/sendMessages'] },
-                    { label: 'Reportes', icon: 'pi pi-fw pi-file', routerLink: ['**'] },
+                    { label: 'Usuario', icon: 'pi pi-fw pi-users', routerLink: ['/accounts/user'] },
                 ]
             },
         ];
