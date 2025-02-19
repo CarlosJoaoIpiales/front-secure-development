@@ -31,7 +31,7 @@ export class LoginComponent {
     ) { }
 
     login() {
-        this.router.navigate(['/user-dashboard']);
+        this.router.navigate(['/user/dashboard']);
         /*this.userService.login(this.email).subscribe(
             response => {
                 if (response.id && response.password) {

@@ -33,24 +33,6 @@ export class LoanComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.cols = [
-            { field: 'unique_key', header: 'Code' },
-            { field: 'serial', header: 'Serial' },
-            { field: 'name', header: 'Name' },
-            { field: 'type', header: 'Type' },
-            { field: 'region', header: 'Region' },
-            { field: 'sub_red', header: 'Sub Red' },
-            { field: 'state', header: 'State' },
-            { field: 'class_b', header: 'Class B' },
-            { field: 'pktfwd', header: 'Pktfwd' },
-            { field: 'latitude', header: 'Latitude' },
-            { field: 'longitude', header: 'Longitude' },
-            { field: 'mqtt', header: 'MQTT' },
-            { field: 'created_at', header: 'Created At' },
-            { field: 'unique_key_company', header: 'Company Code' },
-            { field: 'comunication', header: 'Communication' },
-            { field: 'mac_direction', header: 'MAC Address' }
-        ];
         this.getGateways();
 
         this.eventService.companyChange$.subscribe(() => {
@@ -60,7 +42,7 @@ export class LoanComponent implements OnInit {
     }
 
     openNew() {
-        this.router.navigate(['/devices/gateway/register-gateway']);
+        this.router.navigate(['/user/loans/new-loan']);
     }
 
     deleteSelectedGateways() {

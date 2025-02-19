@@ -87,7 +87,7 @@
                 <ng-template pTemplate="emptymessage">
                     <tr>
                         <td colspan="8" style="text-align: center; font-weight: bold; font-size: 1.2em; padding: 20px;">
-                            Gateways no encontrados.</td>
+                            No existen prestamos</td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="loadingbody">
@@ -97,31 +97,5 @@
                 </ng-template>
             </p-table>
         </div>
-        <p-dialog [(visible)]="deleteGatewayDialog" header="Confirmar" [modal]="true" [style]="{width:'450px'}">
-            <div class="flex align-items-center justify-content-center">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                <span *ngIf="gateway">¿Está seguro de que desea eliminar <b>{{gateway.name}}
-                        {{gateway.serial}}</b>?</span>
-            </div>
-            <ng-template pTemplate="footer">
-                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
-                    (click)="deleteGatewayDialog = false"></button>
-                <button pButton pRipple icon="pi pi-check" class="p-button-text p-button-warning" label="Sí"
-                    (click)="confirmDelete()"></button>
-            </ng-template>
-        </p-dialog>
-
-        <p-dialog [(visible)]="deleteGatewaysDialog" header="Confirmar" [modal]="true" [style]="{width:'450px'}">
-            <div class="flex align-items-center justify-content-center">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                <span>¿Está seguro de que desea eliminar los gateways seleccionados?</span>
-            </div>
-            <ng-template pTemplate="footer">
-                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
-                    (click)="deleteGatewaysDialog = false"></button>
-                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Sí"
-                    (click)="confirmDeleteSelected()"></button>
-            </ng-template>
-        </p-dialog>
     </div>
 </div>

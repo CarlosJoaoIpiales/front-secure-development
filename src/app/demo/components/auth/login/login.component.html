@@ -20,10 +20,6 @@
                     <input pInputText id="password" type="password" required class="w-full p-3 sm:w-30rem mb-3"
                         [(ngModel)]="password" (keyup.enter)="login()" placeholder="Ingrese su contraseña" />
                     <div class="flex align-items-center justify-content-between mb-5 gap-5">
-                        <div class="flex align-items-center">
-                            <p-checkbox id="rememberme1" [binary]="true" styleClass="mr-2"></p-checkbox>
-                            <label for="rememberme1">Recuerdame</label>
-                        </div>
                         <a class="font-medium no-underline ml-2 text-right cursor-pointer"
                             style="color: var(--primary-color)">¿Perdiste tu contraseña?</a>
                     </div>

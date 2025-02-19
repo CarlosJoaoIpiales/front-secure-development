@@ -10,8 +10,7 @@ import { AppLayoutComponent } from "./layout/app.layout.component";
             {
                 path: '', component: AppLayoutComponent,
                 children: [
-                    { path: 'user-dashboard', loadChildren: () => import('./demo/components/user/dashboard/user-dashboard.module').then(m => m.UserDashboardModule) },
-                    { path: 'loans', loadChildren: () => import('./demo/components/user/loans/loan.module').then(m => m.LoanModule) },
+                    { path: 'user', loadChildren: () => import('./demo/components/user/user.module').then(m => m.UserModule) },
                     { path: 'accounts', loadChildren: () => import('./demo/components/accounts/accounts.module').then(m => m.AccountsModule) },
                     { path: 'analytics', loadChildren: () => import('./demo/components/analytics/analytics.module').then(m => m.AnalyticsModule) },
                 ]
