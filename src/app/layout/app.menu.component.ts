@@ -23,15 +23,16 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Servicios',
                 items: [
+                    { label: 'Cuenta', icon: 'pi pi-fw pi-dollar', routerLink: ['/user/account'] },
                     { label: 'Prestamos', icon: 'pi pi-fw pi-mobile', routerLink: ['/user/loans'] },
-                    { label: 'Pagos de Prestaos', icon: 'pi pi-fw pi-bolt', routerLink: ['/devices/meter'] },
+                    { label: 'Pagos', icon: 'pi pi-fw pi-bolt', routerLink: ['/user/payments'] },
                     
                 ]
             },
             {
-                label: 'Perfil',
+                label: 'Usuario',
                 items: [
-                    { label: 'Usuario', icon: 'pi pi-fw pi-users', routerLink: ['/accounts/user'] },
+                    { label: 'Perfil', icon: 'pi pi-fw pi-users', routerLink: ['/accounts/user'] },
                 ]
             },
         ];

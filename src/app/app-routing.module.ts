@@ -11,8 +11,8 @@ import { AppLayoutComponent } from "./layout/app.layout.component";
                 path: '', component: AppLayoutComponent,
                 children: [
                     { path: 'user', loadChildren: () => import('./demo/components/user/user.module').then(m => m.UserModule) },
-                    { path: 'accounts', loadChildren: () => import('./demo/components/accounts/accounts.module').then(m => m.AccountsModule) },
-                    { path: 'analytics', loadChildren: () => import('./demo/components/analytics/analytics.module').then(m => m.AnalyticsModule) },
+                    /*{ path: 'accounts', loadChildren: () => import('./demo/components/accounts/accounts.module').then(m => m.AccountsModule) },
+                    { path: 'analytics', loadChildren: () => import('./demo/components/analytics/analytics.module').then(m => m.AnalyticsModule) },*/
                 ]
             },
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },

@@ -18,7 +18,6 @@ import { AppConfigModule } from './config/config.module';
 import { AppSidebarComponent } from "./app.sidebar.component";
 import { AppLayoutComponent } from "./app.layout.component";
 import { DropdownModule } from "primeng/dropdown";
-import { GatewayModule } from '../demo/components/devices/gateways/gateway.module';
 import { ButtonModule } from 'primeng/button';
 
 @NgModule({
@@ -44,7 +43,6 @@ import { ButtonModule } from 'primeng/button';
         RouterModule,
         AppConfigModule,
         DropdownModule,
-        GatewayModule,
         ButtonModule
     ],
     exports: [AppLayoutComponent]

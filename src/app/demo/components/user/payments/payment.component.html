@@ -1,0 +1,102 @@
+<p-stepper>
+    <p-stepperPanel header="Selecciona el prestamo que desees pagar">
+        <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
+            <div class="flex flex-column h-12rem">
+                <div
+                    class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+                    <p-listbox [options]="cities" [(ngModel)]="selectedCity" optionLabel="name"
+                        [style]="{'width':'15rem'}" [listStyle]="{'max-height': '220px'}" />
+                </div>
+            </div>
+            <div class="flex pt-4 justify-content-end">
+                <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="nextCallback.emit()" />
+            </div>
+        </ng-template>
+    </p-stepperPanel>
+    <p-stepperPanel header="Selecciona la cantidad a pagar">
+        <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback"
+            let-index="index">
+            <div class="flex flex-column h-12rem">
+                <div
+                    class="border-2 border-dashed surface-border border-round surface-ground justify-content-center align-items-center font-medium" style="display: flex; flex-direction: column;">
+                    <div class="field" style="display: flex; flex-direction: column;">
+                        <label htmlFor="name1">¿Cuánto deseas pagar?</label>
+                        <p-inputNumber [(ngModel)]="amount" inputId="currency-us" mode="currency" currency="USD"
+                            locale="en-US" (onChange)="calculateLoan()" />
+                        <small *ngIf="amount > 60000" style="color: red;">Tu monto debe ser menor a $60.000,00</small>
+                    </div>
+                </div>
+            </div>
+            <div class="flex pt-4 justify-content-between">
+                <p-button label="Back" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+                <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="nextCallback.emit()" />
+            </div>
+        </ng-template>
+    </p-stepperPanel>
+    <p-stepperPanel header="Confirma el pago">
+        <ng-template pTemplate="content" let-prevCallback="prevCallback" let-index="index">
+            <div class="flex flex-column h-12rem">
+                <div
+                    class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+                    <div class="col-12 md:col-6">
+                        <div class="card p-fluid">
+                            <p-card header="Nuevas tasas de pago del Crédito">
+                                <h2><strong>${{ monthlyPayment.toFixed(2) }}</strong> / mes</h2>
+                                <p>Total interés: ${{ totalInterest.toFixed(2) }}</p>
+                                <p>Total seguro: ${{ totalInsurance.toFixed(2) }}</p>
+                                <p>Total a pagar: <strong>${{ totalToPay.toFixed(2) }}</strong></p>
+                            </p-card>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <p-table #dt [value]="amortizationTable" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                        [globalFilterFields]="['unique_key', 'serial', 'name', 'type', 'region', 'sub_red']" [paginator]="true"
+                        [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true"
+                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} entradas" [rowHover]="true"
+                        dataKey="unique_key">
+                        <ng-template pTemplate="caption">
+                            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                <h5 class="m-0">Tabla de amortizacion</h5>
+                            </div>
+                        </ng-template>
+        
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Mes</th>
+                                <th>Capital</th>
+                                <th>Interés</th>
+                                <th>Seguro</th>
+                                <th>Total</th>
+                            </tr>
+                        </ng-template>
+        
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td>{{ row.month }}</td>
+                                <td>{{ row.capital | number: '1.2-2' }}</td>
+                                <td>{{ row.interest | number: '1.2-2' }}</td>
+                                <td>{{ row.insurance | number: '1.2-2' }}</td>
+                                <td>{{ row.total | number: '1.2-2' }}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="8" style="text-align: center; font-weight: bold; font-size: 1.2em; padding: 20px;">
+                                    No existen datos</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="loadingbody">
+                            <tr>
+                                <td colspan="8">Cargando los datos. Por favor espere.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+            <div class="flex pt-4 justify-content-start">
+                <p-button label="Back" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+            </div>
+        </ng-template>
+    </p-stepperPanel>
+</p-stepper>

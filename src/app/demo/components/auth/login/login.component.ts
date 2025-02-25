@@ -60,4 +60,8 @@ export class LoginComponent {
     registerAccount() {
         this.router.navigate(['/auth/register']);
     }
+
+    forgotPasswordAccount() {
+        this.router.navigate(['/auth/forgot-password']);
+    }
 }

@@ -1,16 +1,14 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { LocationService } from '../../../../service/location.service';
 import { Location } from '@angular/common';
-import { Company } from '../../../../api/company.model'
-import { Meter } from '../../../../api/meter.model';
-import { CompanyService } from '../../../../service/company.service';
-import { MeterService } from '../../../../service/meter.service';
-import { Gateway } from '../../../../api/gateway.model';
-import { GatewayService } from '../../../../service/gateway.service';
 import { MessageService } from 'primeng/api';
-import { Brand } from '../../../../api/brand.model';
-import { Model } from '../../../../api/model.model';
-import { BrandService } from '../../../../service/brand.service';
+
+interface AmortizationRow {
+    month: number;
+    capital: number;
+    interest: number;
+    insurance: number;
+    total: number;
+}
 
 @Component({
     selector: 'app-new-loan',
@@ -21,164 +19,58 @@ import { BrandService } from '../../../../service/brand.service';
 export class CreateLoanComponent {
 
     amount: number = 0;
-    selectedState: any = null;
-    selectedCompany: any = null;
-    selectedRegion: any = null;
-    selectedTypeProduct: any = null;
-    selectedSubRed: any = null;
-    selectedGateway: any = null;
-    selectedDiameter: any = null;
-    selectedBrand: any = null;
-    selectedModel: any = null;
-    valClassSupport: string = '';
-    comunicationCheck: string[] = [];
-    typeAutentification: string = '';
-    companies: Company[] = [];
-    gateways: Gateway[] = [];
-    lat: number = -0.345638;
-    lng: number = -78.447889;
-    companyKey: string = localStorage.getItem('selectedCompanyId');
-    meters: Meter[] = [];
-    createMeterDialog: boolean = false;
-    meter: Meter = {
-        name: '',
-        dev_eui: '',
-        serial: '',
-        diameter: '',
-        type_communication: '',
-        state: false,
-        last_reading: 0,
-        model: '',
-        class_support: '',
-        battery_percentage: '',
-        last_comunication: '',
-        valve_state: '',
-        latitude: this.lat,
-        longitude: this.lng,
-        company_unique_key: '',
-        type_product: '',
-        sub_red: '',
-        app_skey: '',
-        app_key: '',
-        nwk_skey: '',
-        dev_addr: '',
-        authentication_type: '',
-        eui_aplication: '',
-        direction_gprs: '',
-        imei: '',
-        number_serial: '',
-        gateway_unique_key: '',
-        region: ''
-    };
-    brand: Brand = {
-        name: '',
-        unique_key: '',
-        models: []
-    };
-    model: Model = {
-        name: '',
-        unique_key: '',
-        brand: this.brand
-    }
-    dropdownItemsState = [
-        { name: 'Activo', code: 'true' },
-        { name: 'Inactivo', code: 'false' },
+    termSelect: any = null;
+    createLoanDialog: boolean = false;
+    amortizationMethod: string = '';
+    terms = [
+        { name: '3 meses', value: 3 },
+        { name: '4 meses', value: 4 },
+        { name: '5 meses', value: 5 },
+        { name: '6 meses', value: 6 },
+        { name: '7 meses', value: 7 },
+        { name: '8 meses', value: 8 },
+        { name: '9 meses', value: 9 },
+        { name: '10 meses', value: 10 },
+        { name: '11 meses', value: 11 },
+        { name: '12 meses (1.0 años)', value: 12 },
+        { name: '18 meses (1.5 años)', value: 18 },
+        { name: '24 meses (2.0 años)', value: 24 },
+        { name: '30 meses (2.5 años)', value: 30 },
+        { name: '36 meses (3.0 años)', value: 36 },
+        { name: '42 meses (3.5 años)', value: 42 },
+        { name: '48 meses (4.0 años)', value: 48 },
+        { name: '54 meses (4.5 años)', value: 54 },
+        { name: '60 meses (5.0 años)', value: 60 },
+        { name: '66 meses (5.5 años)', value: 66 },
+        { name: '72 meses (6.0 años)', value: 72 },
+        { name: '78 meses (6.5 años)', value: 78 },
+        { name: '84 meses (7.0 años)', value: 84 },
     ];
-    dropdownBrandMeter: Brand [] = [];
-    dropdownModelMeter: Model [] = [];
-    dropdownItemsRegion = [
-        { name: 'CN470', code: 'CN470' },
-        { name: 'CN470PREQUEL', code: 'CN470PREQUEL' },
-        { name: 'CN470PHOENIX', code: 'CN470PHOENIX' },
-        { name: 'AS923MYS', code: 'AS923MYS' },
-        { name: 'EU868', code: 'EU868' },
-        { name: 'AS923', code: 'AS923' },
-        { name: 'US915', code: 'US915' },
-        { name: 'AU915', code: 'AU915' },
-        { name: 'EU433', code: 'EU433' },
-        { name: 'IN865', code: 'IN865' },
-        { name: 'CN470ALID', code: 'CN470ALID' },
-        { name: 'CN470ALIS', code: 'CN470ALIS' },
-        { name: 'AS923IND', code: 'AS923IND' },
-        { name: 'ID920', code: 'ID920' },
-        { name: 'KR920', code: 'KR920' },
-        { name: 'RU864', code: 'RU864' },
+    stateOptions = [
+        { label: 'Método Francés: Cuotas fijas', value: 'MF' },
+        { label: 'Método Alemán: Cuotas decrecientes', value: 'MA' }
     ];
-    dropdownItemsProductType = [
-        { name: 'rhf3mr01', code: 'rhf3mr01' },
-        { name: 'rhf3m485', code: 'rhf3m485' },
-        { name: 'lorawan', code: 'lorawan' },
-    ];
-
-    dropdownItemsDiameter = [
-        { name: '15', code: '15' },
-        { name: '20', code: '20' },
-        { name: '25', code: '25' },
-        { name: '40', code: '40' },
-        { name: '50', code: '50' },
-        { name: 'DN50', code: 'DN50' },
-        { name: 'DN65', code: 'DN65' },
-        { name: 'DN80', code: 'DN80' },
-        { name: 'DN100', code: 'DN100' },
-        { name: 'DN125', code: 'DN125' },
-        { name: 'DN150', code: 'DN150' },
-        { name: 'DN200', code: 'DN200' },
-        { name: 'DN250', code: 'DN250' },
-        { name: 'DN300', code: 'DN300' },
-        { name: 'DN400', code: 'DN400' }
-    ];
-
-    dropdownItemsTypeGateway = [
-        { name: 'Wi-Fi', code: 'WIFI' },
-        { name: 'Ethernet', code: 'ETH' },
-        { name: 'Bluetooth', code: 'BLU' },
-        { name: 'Zigbee', code: 'ZIG' }
-    ];
-
-    dropdownItemsSubRed = [
-        { name: 'Subred A', code: 'A' },
-        { name: 'Subred B', code: 'B' },
-        { name: 'Subred C', code: 'C' },
-        { name: 'Subred D', code: 'D' }
-    ];
-
-    cities1: any[] = [];
-    cities2: any[] = [];
-    city1: any = null;
-    city2: any = null;
-    selectedCountry: any = null;
-    selectedProvince: any = null;
-    selectedCity: any = null;
-    countries: any[] = [];
-    provinces: any[] = [];
-    cities: any[] = [];
+    interestRate = 15.6 / 100 / 12;
+    insurancePerMonth = 0.70;
+    monthlyPayment: number = 0;
+    totalInterest: number = 0;
+    totalInsurance: number = 0;
+    totalToPay: number = 0;
+    amortizationTable: AmortizationRow[] = [];
+    value: string = '';
+    cols: any[] = [];
 
     constructor(
-        private locationService: LocationService,
         private location: Location,
-        private companyService: CompanyService,
-        private meterService: MeterService,
-        private gatewayService: GatewayService,
-        private messageService: MessageService,
-        private brandService: BrandService
     ) { }
-
-    ngOnInit(): void {
-        this.locationService.getCountries().subscribe(data => {
-            this.countries = data;
-        });
-        this.brandService.getAllBrands().subscribe(data => {
-            this.dropdownBrandMeter = data;
-        });
-        this.loadCompaniesMeters();
-    }
 
     onGoBack(): void {
         this.location.back();
     }
 
     onSave(): void {
-        if (!this.validateRequiredFields()) {
+        this.location.back();
+        /*if (!this.validateRequiredFields()) {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Faltan rellenar algunos campos.' });
             this.createMeterDialog = false;
             return;
@@ -227,11 +119,11 @@ export class CreateLoanComponent {
                 this.createMeterDialog = false;
                 console.error(error);
             }
-        );
+        );*/
     }
 
     onClear(): void {
-        this.selectedState = null;
+        /*this.selectedState = null;
         this.selectedBrand = null;
         this.selectedModel = null;
         this.typeAutentification = null;
@@ -239,47 +131,20 @@ export class CreateLoanComponent {
         this.selectedProvince = null;
         this.selectedCity = null;
         this.lat = null;
-        this.lng = null;
-    }
-
-    loadCompaniesMeters(): void {
-        this.companyService.getCompanies().subscribe(
-            data => {
-                this.companies = data;
-            },
-            error => {
-                console.error('Error al obtener las compañías', error);
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudieron obtener las compañías.' });
-            }
-        );
-
-        this.loadGatewaysByCompany();
-
-        this.meterService.getMetersByCompany(this.companyKey).subscribe(
-            data => {
-                this.meters = data;
-            },
-            error => {
-                console.error('Error al obtener los medidores', error);
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudieron obtener los medidores.' });
-            }
-        );
-    }
-
-    loadGatewaysByCompany(): void {
-        if (this.selectedCompany && this.selectedCompany.unique_key) {
-            this.gatewayService.getGatewaysByCompany(this.selectedCompany.unique_key).subscribe(data => {
-                this.gateways = data;
-            });
-        } else {
-            this.gateways = [];
-            console.warn('selectedCompany es null o no tiene un unique_key válido.');
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Gateway no válido.' });
-        }
+        this.lng = null;*/
+        this.amortizationMethod = '';
+        this.amount = 0;
+        this.termSelect = null;
+        this.createLoanDialog = false;
+        this.amortizationTable = [];
+        this.totalInterest = 0;
+        this.totalInsurance = 0;
+        this.totalToPay = 0;
+        this.monthlyPayment = 0;
     }
 
     validateRequiredFields(): boolean {
-        if (!this.meter.dev_eui) {
+        /*if (!this.meter.dev_eui) {
             return false;
         }
         if (this.comunicationCheck.includes('LoRaWAN') && !this.valClassSupport && !this.valClassSupport && !this.selectedRegion && !this.selectedTypeProduct && !this.selectedSubRed) {
@@ -299,21 +164,50 @@ export class CreateLoanComponent {
         }
         if (this.comunicationCheck.includes('Mbus') && !this.selectedGateway && !this.meter.number_serial) {
             return false;
-        }
+        }*/
         return true;
     }
 
-    loadModelsByBrand(): void {
-        if (this.selectedBrand && this.selectedBrand.unique_key) {
-            this.dropdownBrandMeter.forEach(brand => {
-                if (brand.unique_key === this.selectedBrand.unique_key) {
-                    this.dropdownModelMeter = brand.models;
-                }
-            });
+    calculateLoan() {
+        if (!this.amount || !this.termSelect || !this.amortizationMethod) return;
+        let remainingCapital = this.amount;
+        let interestRate = this.interestRate;
+        let totalMonths = this.termSelect.value;
+        this.amortizationTable = [];
+        this.totalInterest = 0;
+        this.totalInsurance = totalMonths * this.insurancePerMonth;
+        
+        if (this.amortizationMethod === 'MF') {
+            let monthlyRateFactor = Math.pow(1 + interestRate, -totalMonths);
+            this.monthlyPayment = (this.amount * interestRate) / (1 - monthlyRateFactor);
+    
         } else {
-            this.dropdownModelMeter = [];
-            console.warn('selectedBrand es null o no tiene un unique_key válido.');
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Modelo no válido.' });
+            this.monthlyPayment = (this.amount / totalMonths) + (remainingCapital * interestRate);
         }
-    }
+    
+        for (let i = 1; i <= totalMonths; i++) {
+            let interest = remainingCapital * interestRate;
+            let capital = 0;
+    
+            if (this.amortizationMethod === 'MF') {
+                capital = this.monthlyPayment - interest;
+            } else {
+                capital = this.amount / totalMonths;
+                this.monthlyPayment = capital + interest;
+            }
+    
+            remainingCapital -= capital;
+            this.totalInterest += interest;
+    
+            this.amortizationTable.push({
+                month: i,
+                capital: parseFloat(capital.toFixed(2)),
+                interest: parseFloat(interest.toFixed(2)),
+                insurance: this.insurancePerMonth,
+                total: parseFloat((this.monthlyPayment + this.insurancePerMonth).toFixed(2))
+            });
+        }
+    
+        this.totalToPay = this.amount + this.totalInterest + this.totalInsurance;
+    }    
 }

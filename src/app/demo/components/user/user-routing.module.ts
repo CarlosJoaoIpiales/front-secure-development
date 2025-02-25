@@ -5,9 +5,9 @@ import { RouterModule } from '@angular/router';
     imports: [RouterModule.forChild([
         { path: 'dashboard', loadChildren: () => import('./dashboard/user-dashboard.module').then(m => m.UserDashboardModule) },
         { path: 'loans', loadChildren: () => import('./loans/loan.module').then(m => m.LoanModule) },
-        /*{ path: 'access', loadChildren: () => import('./access/access.module').then(m => m.AccessModule) },
-        { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule) },
-        { path: 'register', loadChildren: () => import('./register/register.module').then(m => m.RegisterModule) },*/
+        { path: 'payments', loadChildren: () => import('./payments/payment.module').then(m => m.PaymentModule) },
+        { path: 'account', loadChildren: () => import('./account/account.module').then(m => m.AccountModule) },
+        /*{ path: 'register', loadChildren: () => import('./register/register.module').then(m => m.RegisterModule) },*/
         { path: '**', redirectTo: '../notfound' }
     ])],
     exports: [RouterModule]

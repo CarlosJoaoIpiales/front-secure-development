@@ -15,6 +15,9 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { CardModule } from 'primeng/card';
+import { TableModule } from 'primeng/table';
 
 @NgModule({
     imports: [
@@ -32,6 +35,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
         DialogModule,
         DividerModule,
         InputNumberModule,
+        SelectButtonModule,
+        CardModule,
+        TableModule,
         CreateLoanRoutingModule,
     ],
     declarations: [CreateLoanComponent]

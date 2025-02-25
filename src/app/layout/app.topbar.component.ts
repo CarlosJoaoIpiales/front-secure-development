@@ -7,7 +7,7 @@ import { Company } from '../demo/api/company.model';
     selector: 'app-topbar',
     templateUrl: './app.topbar.component.html'
 })
-export class AppTopBarComponent implements OnInit {
+export class AppTopBarComponent {
 
     items!: MenuItem[];
     companies: Company[] = [];
@@ -21,7 +21,4 @@ export class AppTopBarComponent implements OnInit {
     constructor(
         public layoutService: LayoutService,
     ) { }
-
-    ngOnInit() {
-    }
 }
