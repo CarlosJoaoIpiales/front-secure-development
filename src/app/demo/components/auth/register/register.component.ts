@@ -104,7 +104,7 @@ export class RegisterComponent implements OnInit {
             const controlErrors = this.registerForm.get(key)?.errors;
             if (controlErrors != null) {
                 Object.keys(controlErrors).forEach(keyError => {
-                    console.log('Key control: ' + key + ', keyError: ' + keyError + ', error value: ', controlErrors[keyError]);
+                    console.log(`Key control: ${key}, keyError: ${keyError}, error value: ${controlErrors[keyError]}`);
                 });
             }
         });
