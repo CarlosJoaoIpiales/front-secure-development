@@ -54,7 +54,7 @@
     </div>
     <div class="col-12">
         <div class="card">
-            <p-table #dt [value]="amortizationTable" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+            <p-table #dt [value]="amortizationTable" responsiveLayout="scroll" [rows]="10"
                 [globalFilterFields]="['unique_key', 'serial', 'name', 'type', 'region', 'sub_red']" [paginator]="true"
                 [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true"
                 currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} entradas" [rowHover]="true"

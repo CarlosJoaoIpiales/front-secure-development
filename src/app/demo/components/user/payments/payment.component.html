@@ -1,10 +1,10 @@
 <p-stepper>
-    <p-stepperPanel header="Selecciona el prestamo que desees pagar">
+    <p-stepperPanel header=": Selecciona el prestamo que desees pagar">
         <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
             <div class="flex flex-column h-12rem">
                 <div
                     class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-                    <p-listbox [options]="cities" [(ngModel)]="selectedCity" optionLabel="name"
+                    <p-listbox [options]="loans" [(ngModel)]="selectedLoan" optionLabel="amount"
                         [style]="{'width':'15rem'}" [listStyle]="{'max-height': '220px'}" />
                 </div>
             </div>
@@ -13,17 +13,19 @@
             </div>
         </ng-template>
     </p-stepperPanel>
-    <p-stepperPanel header="Selecciona la cantidad a pagar">
+    <p-stepperPanel header=": Selecciona la cantidad a pagar">
         <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback"
             let-index="index">
             <div class="flex flex-column h-12rem">
                 <div
                     class="border-2 border-dashed surface-border border-round surface-ground justify-content-center align-items-center font-medium" style="display: flex; flex-direction: column;">
-                    <div class="field" style="display: flex; flex-direction: column;">
-                        <label htmlFor="name1">¿Cuánto deseas pagar?</label>
-                        <p-inputNumber [(ngModel)]="amount" inputId="currency-us" mode="currency" currency="USD"
-                            locale="en-US" (onChange)="calculateLoan()" />
-                        <small *ngIf="amount > 60000" style="color: red;">Tu monto debe ser menor a $60.000,00</small>
+                    <div class="border-2 border-dashed surface-border border-round surface-ground justify-content-center align-items-center font-medium" style="display: flex; flex-direction: column;">
+                        <div class="field" style="display: flex; flex-direction: column;">
+                            <label htmlFor="name1">¿Cuánto deseas pagar?</label>
+                            <p-inputNumber [(ngModel)]="amount" inputId="currency-us" mode="currency" currency="USD" locale="en-US" (ngModelChange)="calculateLoan()" />
+                            <small *ngIf="amount > selectedLoan?.amount" style="color: red;">El monto no puede ser mayor al monto del préstamo seleccionado</small>
+                            <small *ngIf="amount > bankAccountBalance" style="color: red;">El monto no puede ser mayor a la cantidad que tiene en la cuenta bancaria</small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -33,7 +35,7 @@
             </div>
         </ng-template>
     </p-stepperPanel>
-    <p-stepperPanel header="Confirma el pago">
+    <p-stepperPanel header=": Confirma el pago">
         <ng-template pTemplate="content" let-prevCallback="prevCallback" let-index="index">
             <div class="flex flex-column h-12rem">
                 <div
@@ -96,7 +98,69 @@
             </div>
             <div class="flex pt-4 justify-content-start">
                 <p-button label="Back" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+                <p-button label="Pagar" icon="pi pi-arrow-right" iconPos="right" (onClick)="savePayment()" />
             </div>
         </ng-template>
     </p-stepperPanel>
+
+    <div class="col-12">
+        <div class="card">
+            <p-table #dt [value]="loanPayments" responsiveLayout="scroll" [rows]="10"
+                [globalFilterFields]="['id', 'amount', 'transactionDate', 'description']"
+                [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} entradas"
+                [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Historial de Transacciones</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Buscar..."
+                                class="w-full sm:w-auto" />
+                        </span>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="id">Código <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="amount">Cantidad <p-sortIcon field="amount"></p-sortIcon></th>
+                        <th pSortableColumn="transactionDate">Fecha <p-sortIcon field="transactionDate"></p-sortIcon></th>
+                        <th pSortableColumn="description">Descripción<p-sortIcon field="description"></p-sortIcon></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-transaction>
+                    <tr>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Código</span>
+                            {{transaction.id}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Cantidad</span>
+                            {{transaction.amount | currency}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Fecha</span>
+                            {{transaction.transactionDate | date}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Descripción</span>
+                            {{transaction.description}}
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="8" style="text-align: center; font-weight: bold; font-size: 1.2em; padding: 20px;">
+                            No existe historial de transacciones.</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="loadingbody">
+                    <tr>
+                        <td colspan="8">Cargando los datos de las Transacciones. Por favor espere.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
 </p-stepper>

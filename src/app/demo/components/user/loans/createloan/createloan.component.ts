@@ -1,6 +1,8 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { MessageService } from 'primeng/api';
+import { LoanService } from '../../../../service/loan.service';
+import { Loan } from '../../../../api/loan.model';
 
 interface AmortizationRow {
     month: number;
@@ -62,6 +64,7 @@ export class CreateLoanComponent {
 
     constructor(
         private location: Location,
+        private loanService: LoanService
     ) { }
 
     onGoBack(): void {
@@ -69,69 +72,46 @@ export class CreateLoanComponent {
     }
 
     onSave(): void {
-        this.location.back();
-        /*if (!this.validateRequiredFields()) {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Faltan rellenar algunos campos.' });
-            this.createMeterDialog = false;
+        if (!this.amount || !this.termSelect || !this.amortizationMethod) {
+            console.error('Faltan campos obligatorios');
             return;
         }
-        if (this.selectedState) {
-            this.meter.state = this.selectedState.code === 'true';
-        }
-        if (this.selectedBrand) {
-            if (this.selectedModel) {
-                this.meter.model = this.selectedModel.name;
+
+        const loan: Loan = {
+            amount: this.amount,
+            interestRate: this.interestRate,
+            term: this.termSelect.value,
+            startDate: new Date(),
+            endDate: new Date(),
+            approved: true,
+            method: this.amortizationMethod,
+            monthlyPayment: this.monthlyPayment,
+            remainingBalance: this.amount,
+            paymentsMade: 0,
+            amortizationMethod: this.amortizationMethod, 
+            insurancePerMonth: this.insurancePerMonth,
+            totalInterest: this.totalInterest,
+            totalInsurance: this.totalInsurance,
+            totalToPay: this.totalToPay,
+            user: {
+                id: localStorage.getItem('userId') || '0'
             }
-        }
-        if (this.selectedDiameter) {
-            this.meter.diameter = this.selectedDiameter.code;
-        }
-        this.meter.type_communication = this.comunicationCheck.join(', ');
-        if (this.selectedCompany) {
-            this.meter.company_unique_key = this.selectedCompany.unique_key;
-        }
-        if (this.valClassSupport) {
-            this.meter.class_support = this.valClassSupport;
-        }
-        if (this.selectedRegion) {
-            this.meter.region = this.selectedRegion.name;
-        }
-        if (this.selectedTypeProduct) {
-            this.meter.type_product = this.selectedTypeProduct.name;
-        }
-        if (this.selectedSubRed) {
-            this.meter.sub_red = this.selectedSubRed.name;
-        }
-        if (this.typeAutentification) {
-            this.meter.authentication_type = this.typeAutentification;
-        }
-        if (this.selectedGateway) {
-            this.meter.gateway_unique_key = this.selectedGateway.unique_key;
-        }
-        this.meter.serial = this.meter.name;
-        console.log(this.meter);
-        this.meterService.saveMeter(this.meter).subscribe(
+        };        
+
+        console.log('Loan details:', loan);
+
+        this.loanService.createLoan(loan).subscribe(
             response => {
+                console.log('Préstamo creado con éxito:', response);
                 this.location.back();
             },
             error => {
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al guardar el medidor.' });
-                this.createMeterDialog = false;
-                console.error(error);
+                console.error('Error al crear el préstamo:', error);
             }
-        );*/
+        );
     }
 
     onClear(): void {
-        /*this.selectedState = null;
-        this.selectedBrand = null;
-        this.selectedModel = null;
-        this.typeAutentification = null;
-        this.selectedCountry = null;
-        this.selectedProvince = null;
-        this.selectedCity = null;
-        this.lat = null;
-        this.lng = null;*/
         this.amortizationMethod = '';
         this.amount = 0;
         this.termSelect = null;
@@ -141,31 +121,6 @@ export class CreateLoanComponent {
         this.totalInsurance = 0;
         this.totalToPay = 0;
         this.monthlyPayment = 0;
-    }
-
-    validateRequiredFields(): boolean {
-        /*if (!this.meter.dev_eui) {
-            return false;
-        }
-        if (this.comunicationCheck.includes('LoRaWAN') && !this.valClassSupport && !this.valClassSupport && !this.selectedRegion && !this.selectedTypeProduct && !this.selectedSubRed) {
-            return false;
-        }
-        if (this.typeAutentification.includes('OTA') && !this.meter.app_key) {
-            return false;
-        }
-        if (this.typeAutentification.includes('ABP') && !this.meter.dev_addr && !this.meter.app_skey && !this.meter.nwk_skey) {
-            return false;
-        }
-        if (this.comunicationCheck.includes('GPRS') && !this.meter.serial && !this.meter.direction_gprs) {
-            return false;
-        }
-        if (this.comunicationCheck.includes('NB-IoT') && !this.meter.imei) {
-            return false;
-        }
-        if (this.comunicationCheck.includes('Mbus') && !this.selectedGateway && !this.meter.number_serial) {
-            return false;
-        }*/
-        return true;
     }
 
     calculateLoan() {
@@ -207,7 +162,6 @@ export class CreateLoanComponent {
                 total: parseFloat((this.monthlyPayment + this.insurancePerMonth).toFixed(2))
             });
         }
-    
         this.totalToPay = this.amount + this.totalInterest + this.totalInsurance;
     }    
 }

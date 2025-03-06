@@ -1,9 +1,19 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { GatewayService } from '../../../service/gateway.service';
-import { Gateway } from '../../../api/gateway.model';
 import { Router } from '@angular/router';
 import { MenuItem, MessageService } from 'primeng/api';
-import { EventCommunicationService } from '../../../service/event-communication.service';
+import { Loan } from '../../../api/loan.model';
+import { LoanService } from '../../../service/loan.service';
+import { BankAccountService } from '../../../service/bank-account.service';
+import { BankAccountDetails } from '../../../api/bank-account-details.model';
+import { Location } from '@angular/common';
+
+interface AmortizationRow {
+    month: number;
+    capital: number;
+    interest: number;
+    insurance: number;
+    total: number;
+}
 
 @Component({
     templateUrl: './payment.component.html',
@@ -11,109 +21,145 @@ import { EventCommunicationService } from '../../../service/event-communication.
 })
 export class PaymentComponent implements OnInit {
 
-    gateways: Gateway[] = [];
+    loans: Loan[] = [];
     items: MenuItem[] = [];
-    cols: any[] = [];
-    selectedGateways: Gateway[] = [];
     loading: boolean = true;
-    uniqueKeyCompany: string = localStorage.getItem('selectedCompanyId') || '';
-    gatewayDialog: boolean = false;
-    deleteGatewayDialog: boolean = false;
-    deleteGatewaysDialog: boolean = false;
-    gateway: Gateway = {} as Gateway;
-    submitted: boolean = false;
+    selectedLoan: Loan | null = null;
+    amount: number = 0;
+    amountToPay: number = 0;
+    bankAccountBalance: number = 0;
+    termSelect: any = null;
+    createLoanDialog: boolean = false;
+    amortizationMethod: string = '';
+    term: number = 0;
+    interestRate = 15.6 / 100 / 12;
+    insurancePerMonth = 0.70;
+    monthlyPayment: number = 0;
+    totalInterest: number = 0;
+    totalInsurance: number = 0;
+    totalToPay: number = 0;
+    amortizationTable: AmortizationRow[] = [];
+    value: string = '';
+    cols: any[] = [];
+    loanPayments: any[] = [];
 
     @ViewChild('filter') filter!: ElementRef;
 
     constructor(
-        private gatewayService: GatewayService, 
         private router: Router,
         private messageService: MessageService,
-        private eventService: EventCommunicationService,
+        private loanService: LoanService,
+        private bankAccountService: BankAccountService,
+        private location: Location,
     ) { }
 
     ngOnInit() {
-        this.getGateways();
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            this.loanService.getUserLoans(userId).subscribe(
+                (loans: Loan[]) => {
+                    this.loans = loans;
+                    console.log('Loans:', this.loans);
+                },
+                error => {
+                    console.error('Error fetching loans', error);
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener los préstamos', life: 3000 });
+                }
+            );
 
-        this.eventService.companyChange$.subscribe(() => {
-            this.uniqueKeyCompany = localStorage.getItem('selectedCompanyId') || '';
-            this.getGateways();
-        });
-    }
-
-    openNew() {
-        this.router.navigate(['/user/loans/new-loan']);
-    }
-
-    deleteSelectedGateways() {
-        this.deleteGatewaysDialog = true;
-    }
-
-    confirmDeleteSelected() {
-        this.deleteGatewaysDialog = false;
-    
-        const deleteRequests = this.selectedGateways.map(gateway =>
-            this.gatewayService.deleteGateway(gateway.unique_key).toPromise()
-        );
-        Promise.all(deleteRequests)
-            .then(() => {
-                this.gateways = this.gateways.filter(val => !this.selectedGateways.includes(val));
-                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Gateways Eliminados', life: 3000 });
-                this.selectedGateways = [];
-            })
-            .catch(() => {
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudieron eliminar todos los gateways seleccionados.' });
-            });
-    }    
-
-    confirmDelete() {
-        this.deleteGatewayDialog = false;
-        this.gatewayService.deleteGateway(this.gateway.unique_key).subscribe({
-            next: () => {
-                this.gateways = this.gateways.filter(val => val.unique_key !== this.gateway.unique_key);
-                this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Gateway Eliminado', life: 3000 });
-                this.gateway = {} as Gateway;
-            },
-            error: (err) => {
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo eliminar el gateway.' });
-            }
-        });
-    }
-    
-
-    hideDialog() {
-        this.gatewayDialog = false;
-        this.submitted = false;
-    }
-
-    findIndexByUniqueKey(unique_key: string): number {
-        let index = -1;
-        for (let i = 0; i < this.gateways.length; i++) {
-            if (this.gateways[i].unique_key === unique_key) {
-                index = i;
-                break;
-            }
+            this.bankAccountService.getUserBankAccountDetails(userId).subscribe(
+                (details: BankAccountDetails) => {
+                    this.bankAccountBalance = details.balance;
+                },
+                error => {
+                    console.error('Error fetching bank account details', error);
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener los detalles de la cuenta bancaria', life: 3000 });
+                }
+            );
         }
-        return index;
     }
 
-    onGlobalFilter(table: any, event: Event) {
-        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    calculateLoan() {
+        console.log('Calculating loan...');
+        if (!this.selectedLoan) {
+            this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Seleccione un préstamo primero', life: 3000 });
+            return;
+        }
+
+        if (this.amount > this.selectedLoan.amount || this.amount > this.bankAccountBalance) {
+            this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'El monto no puede ser mayor al monto del préstamo ni mayor a la cantidad que tiene en la cuenta bancaria', life: 3000 });
+            return;
+        }
+
+        const newAmount = this.selectedLoan.amount - this.amount;
+        this.selectedLoan.amount = newAmount;
+        this.recalculateAmortization(this.selectedLoan);
     }
 
-    openEdit(gateway: Gateway) {
-        this.router.navigate([`/devices/gateway/edit-gateway/${gateway.unique_key}`]);
+    recalculateAmortization(loan: Loan) {
+        this.termSelect = { value: loan.term };
+        this.amortizationMethod = loan.method;
+        this.amountToPay = loan.amount - this.amount;
+
+        if (!loan.amount || !this.termSelect || !this.amortizationMethod) return;
+
+        let remainingCapital = loan.amount;
+        let interestRate = loan.interestRate;
+        let totalMonths = this.termSelect.value;
+        this.amortizationTable = [];
+        this.totalInterest = 0;
+        this.totalInsurance = totalMonths * this.insurancePerMonth;
+
+        if (this.amortizationMethod === 'MF') {
+            let monthlyRateFactor = Math.pow(1 + interestRate, -totalMonths);
+            this.monthlyPayment = (loan.amount * interestRate) / (1 - monthlyRateFactor);
+
+        } else {
+            this.monthlyPayment = (loan.amount / totalMonths) + (remainingCapital * interestRate);
+        }
+
+        for (let i = 1; i <= totalMonths; i++) {
+            let interest = remainingCapital * interestRate;
+            let capital = 0;
+
+            if (this.amortizationMethod === 'MF') {
+                capital = this.monthlyPayment - interest;
+            } else {
+                capital = loan.amount / totalMonths;
+                this.monthlyPayment = capital + interest;
+            }
+
+            remainingCapital -= capital;
+            this.totalInterest += interest;
+
+            this.amortizationTable.push({
+                month: i,
+                capital: parseFloat(capital.toFixed(2)),
+                interest: parseFloat(interest.toFixed(2)),
+                insurance: this.insurancePerMonth,
+                total: parseFloat((this.monthlyPayment + this.insurancePerMonth).toFixed(2))
+            });
+        }
+
+        this.totalToPay = loan.amount + this.totalInterest + this.totalInsurance;
+
+        loan.monthlyPayment = this.monthlyPayment;
+        loan.totalInterest = this.totalInterest;
+        loan.totalInsurance = this.totalInsurance;
+        loan.totalToPay = this.totalToPay;
     }
 
-    getGateways() {
-        this.gatewayService.getGatewaysByCompany(this.uniqueKeyCompany).subscribe(
-            data => {
-                this.gateways = data;
-                this.loading = false;
+    savePayment() {
+        console.log('Paying loan...', this.selectedLoan, this.amount);
+        this.loanService.payLoan(this.selectedLoan.id!, this.amount).subscribe(
+            response => {
+                console.log('Préstamo pagado con éxito:', response);
+                this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Préstamo pagado con éxito', life: 3000 });
+                this.location.back();
             },
             error => {
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo establecer conexion con el servidor', life: 3000 });
-                this.loading = false;
+                console.error('Error al pagar el préstamo:', error);
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al pagar el préstamo', life: 3000 });
             }
         );
     }

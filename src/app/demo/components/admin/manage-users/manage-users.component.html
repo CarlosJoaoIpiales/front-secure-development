@@ -1,0 +1,69 @@
+<div class="grid">
+    <p-toast></p-toast>
+
+    <div class="col-12">
+        <div class="card">
+            <p-table #dt [value]="users" responsiveLayout="scroll" [rows]="10"
+                [globalFilterFields]="['id', 'first_name', 'second_name', 'email', 'role']"
+                [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} entradas"
+                [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Usuarios</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Buscar..."
+                                class="w-full sm:w-auto" />
+                        </span>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="id">Código <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="first_name">Nombre <p-sortIcon field="first_name"></p-sortIcon></th>
+                        <th pSortableColumn="second_name">Apellido <p-sortIcon field="second_name"></p-sortIcon></th>
+                        <th pSortableColumn="email">Correo<p-sortIcon field="email"></p-sortIcon></th>
+                        <th pSortableColumn="role">Rol<p-sortIcon field="role"></p-sortIcon></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-user>
+                    <tr>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Código</span>
+                            {{user.id}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Nombre</span>
+                            {{user.firstName}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Apellido</span>
+                            {{user.lastName}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Correo</span>
+                            {{user.email}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Rol</span>
+                            {{user.role}}
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="8" style="text-align: center; font-weight: bold; font-size: 1.2em; padding: 20px;">
+                            No existe usuarios.</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="loadingbody">
+                    <tr>
+                        <td colspan="8">Cargando los datos de los usuarios. Por favor espere.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

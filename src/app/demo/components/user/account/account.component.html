@@ -4,64 +4,89 @@
         <div class="card mb-0">
             <div class="flex justify-content-between mb-3">
                 <div>
-                    <span class="block text-500 font-medium mb-3">Orders</span>
-                    <div class="text-900 font-medium text-xl">152</div>
+                    <span class="block text-500 font-medium mb-3">Número de Cuenta</span>
+                    <div class="text-900 font-medium text-xl">{{ accountNumber }}</div>
                 </div>
                 <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
                     [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
                     <i class="pi pi-shopping-cart text-blue-500 text-xl"></i>
                 </div>
             </div>
-            <span class="text-green-500 font-medium">24 new </span>
-            <span class="text-500">since last visit</span>
         </div>
     </div>
     <div class="col-12 lg:col-6 xl:col-3">
         <div class="card mb-0">
             <div class="flex justify-content-between mb-3">
                 <div>
-                    <span class="block text-500 font-medium mb-3">Revenue</span>
-                    <div class="text-900 font-medium text-xl">$2.100</div>
+                    <span class="block text-500 font-medium mb-3">Balance</span>
+                    <div class="text-900 font-medium text-xl">{{ balance | currency }}</div>
                 </div>
                 <div class="flex align-items-center justify-content-center bg-orange-100 border-round"
                     [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
                     <i class="pi pi-map-marker text-orange-500 text-xl"></i>
                 </div>
             </div>
-            <span class="text-green-500 font-medium">%52+ </span>
-            <span class="text-500">since last week</span>
         </div>
     </div>
-    <div class="col-12 lg:col-6 xl:col-3">
-        <div class="card mb-0">
-            <div class="flex justify-content-between mb-3">
-                <div>
-                    <span class="block text-500 font-medium mb-3">Customers</span>
-                    <div class="text-900 font-medium text-xl">28441</div>
-                </div>
-                <div class="flex align-items-center justify-content-center bg-cyan-100 border-round"
-                    [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
-                    <i class="pi pi-inbox text-cyan-500 text-xl"></i>
-                </div>
-            </div>
-            <span class="text-green-500 font-medium">520 </span>
-            <span class="text-500">newly registered</span>
-        </div>
-    </div>
-    <div class="col-12 lg:col-6 xl:col-3">
-        <div class="card mb-0">
-            <div class="flex justify-content-between mb-3">
-                <div>
-                    <span class="block text-500 font-medium mb-3">Comments</span>
-                    <div class="text-900 font-medium text-xl">152 Unread</div>
-                </div>
-                <div class="flex align-items-center justify-content-center bg-purple-100 border-round"
-                    [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
-                    <i class="pi pi-comment text-purple-500 text-xl"></i>
-                </div>
-            </div>
-            <span class="text-green-500 font-medium">85 </span>
-            <span class="text-500">responded</span>
+
+    <div class="col-12">
+        <div class="card">
+            <p-table #dt [value]="transactions" responsiveLayout="scroll" [rows]="10"
+                [globalFilterFields]="['id', 'amount', 'transactionDate', 'description']"
+                [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} entradas"
+                [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Historial de Transacciones</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Buscar..."
+                                class="w-full sm:w-auto" />
+                        </span>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="id">Código <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="amount">Cantidad <p-sortIcon field="amount"></p-sortIcon></th>
+                        <th pSortableColumn="transactionDate">Fecha <p-sortIcon field="transactionDate"></p-sortIcon></th>
+                        <th pSortableColumn="description">Descripción<p-sortIcon field="description"></p-sortIcon></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-transaction>
+                    <tr>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Código</span>
+                            {{transaction.id}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Cantidad</span>
+                            {{transaction.amount | currency}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Fecha</span>
+                            {{transaction.transactionDate | date}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Descripción</span>
+                            {{transaction.description}}
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="8" style="text-align: center; font-weight: bold; font-size: 1.2em; padding: 20px;">
+                            No existe historial de transacciones.</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="loadingbody">
+                    <tr>
+                        <td colspan="8">Cargando los datos de las Transacciones. Por favor espere.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
         </div>
     </div>
 </div>

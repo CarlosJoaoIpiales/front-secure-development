@@ -1,7 +1,6 @@
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
-import { Company } from '../demo/api/company.model';
 
 @Component({
     selector: 'app-topbar',
@@ -10,7 +9,6 @@ import { Company } from '../demo/api/company.model';
 export class AppTopBarComponent {
 
     items!: MenuItem[];
-    companies: Company[] = [];
     selectedState: any = null;
     userId = localStorage.getItem('userId');
 

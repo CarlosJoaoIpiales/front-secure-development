@@ -13,11 +13,11 @@
     </div>
     <div class="col-12">
         <div class="card">
-            <p-table #dt [value]="gateways" [columns]="cols" responsiveLayout="scroll" [rows]="10"
-                [globalFilterFields]="['unique_key', 'serial', 'name', 'type', 'region', 'sub_red']" [paginator]="true"
+            <p-table #dt [value]="loans" responsiveLayout="scroll" [rows]="10"
+                [globalFilterFields]="['id', 'amount', 'interestRate', 'term', 'startDate', 'endDate', 'approved']" [paginator]="true"
                 [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true"
                 currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} entradas"
-                [(selection)]="selectedGateways" selectionMode="multiple" [rowHover]="true" dataKey="unique_key">
+                [rowHover]="true" dataKey="unique_key">
                 <ng-template pTemplate="caption">
                     <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
                         <h5 class="m-0">Historial de prestamos</h5>
@@ -31,56 +31,45 @@
 
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="unique_key">Código <p-sortIcon field="unique_key"></p-sortIcon></th>
-                        <th pSortableColumn="serial">Número de Serie <p-sortIcon field="serial"></p-sortIcon></th>
-                        <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
-                        <th pSortableColumn="type">Tipo <p-sortIcon field="type"></p-sortIcon></th>
-                        <th pSortableColumn="region">Región <p-sortIcon field="region"></p-sortIcon></th>
-                        <th pSortableColumn="sub_red">Sub Red <p-sortIcon field="sub_red"></p-sortIcon></th>
-                        <th pSortableColumn="state">Estado <p-sortIcon field="state"></p-sortIcon></th>
-                        <th></th>
+                        <th pSortableColumn="id">Código <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="amount">Monto <p-sortIcon field="amount"></p-sortIcon></th>
+                        <th pSortableColumn="interestRate">Intereses <p-sortIcon field="interestRate"></p-sortIcon></th>
+                        <th pSortableColumn="term">Plazo <p-sortIcon field="term"></p-sortIcon></th>
+                        <th pSortableColumn="startDate">Fecha de inicio <p-sortIcon field="startDate"></p-sortIcon></th>
+                        <th pSortableColumn="endDate">Fecha de Fin <p-sortIcon field="endDate"></p-sortIcon></th>
+                        <th pSortableColumn="approved">Estado <p-sortIcon field="approved"></p-sortIcon></th>
                     </tr>
                 </ng-template>
 
-                <ng-template pTemplate="body" let-gateway>
+                <ng-template pTemplate="body" let-loan>
                     <tr>
-                        <td>
-                            <p-tableCheckbox [value]="gateway"></p-tableCheckbox>
-                        </td>
                         <td style="width:14%; min-width:10rem;">
                             <span class="p-column-title">Código</span>
-                            {{gateway.unique_key}}
+                            {{loan.id}}
                         </td>
                         <td style="width:14%; min-width:10rem;">
-                            <span class="p-column-title">Serial</span>
-                            {{gateway.serial}}
+                            <span class="p-column-title">Monto</span>
+                            {{loan.amount | currency}}
                         </td>
                         <td style="width:14%; min-width:10rem;">
-                            <span class="p-column-title">Nombre</span>
-                            {{gateway.name}}
+                            <span class="p-column-title">Intereses</span>
+                            {{loan.interestRate}}
                         </td>
                         <td style="width:14%; min-width:10rem;">
-                            <span class="p-column-title">Tipo</span>
-                            {{gateway.type}}
+                            <span class="p-column-title">Plazo</span>
+                            {{loan.term}}
                         </td>
                         <td style="width:14%; min-width:10rem;">
-                            <span class="p-column-title">Region</span>
-                            {{gateway.region}}
+                            <span class="p-column-title">Fecha de Inicio</span>
+                            {{loan.startDate | date}}
                         </td>
                         <td style="width:14%; min-width:10rem;">
-                            <span class="p-column-title">Sub Red</span>
-                            {{gateway.sub_red}}
+                            <span class="p-column-title">Fecha de Fin</span>
+                            {{loan.endDate | date}}
                         </td>
                         <td style="width:14%; min-width:10rem;">
                             <span class="p-column-title">Estado</span>
-                            {{gateway.state ? 'Activo' : 'Inactivo'}}
-                        </td>
-                        <td>
-                            <div class="flex">
-                                <button pButton pRipple type="button" icon="pi pi-pencil"
-                                    class="p-button-rounded p-button-text" (click)="openEdit(gateway)"
-                                    ></button>
-                            </div>
+                            {{loan.approved ? 'Activo' : 'Inactivo'}}
                         </td>
                     </tr>
                 </ng-template>
@@ -92,7 +81,7 @@
                 </ng-template>
                 <ng-template pTemplate="loadingbody">
                     <tr>
-                        <td colspan="8">Cargando los datos de los Gateways. Por favor espere.</td>
+                        <td colspan="8">Cargando los datos de los Prestamos. Por favor espere.</td>
                     </tr>
                 </ng-template>
             </p-table>

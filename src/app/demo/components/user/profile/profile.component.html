@@ -1,0 +1,18 @@
+<div class="grid">
+    <p-toast></p-toast>
+    <div class="col-12">
+        <div class="card">
+            <h5>Perfil del Usuario</h5>
+            <div *ngIf="user">
+                <p><strong>Nombre:</strong> {{ user.firstName }}</p>
+                <p><strong>Apellido:</strong> {{ user.lastName }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Teléfono:</strong> {{ user.phoneNumber }}</p>
+                <p><strong>Dirección:</strong> {{ user.address }}</p>
+            </div>
+            <div *ngIf="!user">
+                <p>Cargando datos del usuario...</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,5 +2,5 @@ projectKey=front-secure-development-1
 serverUrl=http://localhost:9000
 serverVersion=10.6.0.92116
 dashboardUrl=http://localhost:9000/dashboard?id=front-secure-development-1
-ceTaskId=6d22a2b3-95bb-417b-8384-4850ddef8c47
-ceTaskUrl=http://localhost:9000/api/ce/task?id=6d22a2b3-95bb-417b-8384-4850ddef8c47
+ceTaskId=c9a635b3-22cc-4f74-a8c2-40d457c690ba
+ceTaskUrl=http://localhost:9000/api/ce/task?id=c9a635b3-22cc-4f74-a8c2-40d457c690ba

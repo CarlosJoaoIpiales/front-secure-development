@@ -1,5 +1,6 @@
 <div class="grid">
     <div class="col-12">
+        <p-toast></p-toast>
         <div class="card">
             <h5 style="width: 100%; display: flex; justify-content: center; align-items: center;">Registrarse</h5>
             <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
@@ -9,7 +10,8 @@
                         <input pInputText formControlName="id" type="text" />
                         <div *ngIf="registerForm.get('id')?.invalid && registerForm.get('id')?.touched">
                             <small *ngIf="registerForm.get('id')?.errors?.['required']">Cédula es requerida</small>
-                            <small *ngIf="registerForm.get('id')?.errors?.['pattern']">Cédula debe tener 10 dígitos</small>
+                            <small *ngIf="registerForm.get('id')?.errors?.['pattern']">Cédula debe tener 10
+                                dígitos</small>
                         </div>
                     </div>
                     <div class="field col-12 md:col-6">
@@ -19,25 +21,32 @@
                         <input pInputText formControlName="name" type="text" />
                         <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
                             <small *ngIf="registerForm.get('name')?.errors?.['required']">Nombre es requerido</small>
-                            <small *ngIf="registerForm.get('name')?.errors?.['minlength']">Nombre debe tener al menos 3 caracteres</small>
-                            <small *ngIf="registerForm.get('name')?.errors?.['pattern']">Nombre solo puede contener letras y espacios</small>
+                            <small *ngIf="registerForm.get('name')?.errors?.['minlength']">Nombre debe tener al menos 3
+                                caracteres</small>
+                            <small *ngIf="registerForm.get('name')?.errors?.['pattern']">Nombre solo puede contener
+                                letras y espacios</small>
                         </div>
                     </div>
                     <div class="field col-12 md:col-6">
                         <label htmlFor="lastname">Apellido</label>
                         <input pInputText formControlName="lastname" type="text" />
                         <div *ngIf="registerForm.get('lastname')?.invalid && registerForm.get('lastname')?.touched">
-                            <small *ngIf="registerForm.get('lastname')?.errors?.['required']">Apellido es requerido</small>
-                            <small *ngIf="registerForm.get('lastname')?.errors?.['minlength']">Apellido debe tener al menos 3 caracteres</small>
-                            <small *ngIf="registerForm.get('lastname')?.errors?.['pattern']">Apellido solo puede contener letras y espacios</small>
+                            <small *ngIf="registerForm.get('lastname')?.errors?.['required']">Apellido es
+                                requerido</small>
+                            <small *ngIf="registerForm.get('lastname')?.errors?.['minlength']">Apellido debe tener al
+                                menos 3 caracteres</small>
+                            <small *ngIf="registerForm.get('lastname')?.errors?.['pattern']">Apellido solo puede
+                                contener letras y espacios</small>
                         </div>
                     </div>
                     <div class="field col-12 md:col-6">
                         <label htmlFor="email">Correo Electrónico</label>
                         <input pInputText formControlName="email" type="text" />
                         <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-                            <small *ngIf="registerForm.get('email')?.errors?.['required']">Correo Electrónico es requerido</small>
-                            <small *ngIf="registerForm.get('email')?.errors?.['email']">Correo Electrónico no es válido</small>
+                            <small *ngIf="registerForm.get('email')?.errors?.['required']">Correo Electrónico es
+                                requerido</small>
+                            <small *ngIf="registerForm.get('email')?.errors?.['email']">Correo Electrónico no es
+                                válido</small>
                         </div>
                     </div>
                     <div class="field col-12 md:col-6">
@@ -45,7 +54,37 @@
                         <input pInputText formControlName="phone" type="text" />
                         <div *ngIf="registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched">
                             <small *ngIf="registerForm.get('phone')?.errors?.['required']">Teléfono es requerido</small>
-                            <small *ngIf="registerForm.get('phone')?.errors?.['pattern']">Teléfono debe tener 10 dígitos</small>
+                            <small *ngIf="registerForm.get('phone')?.errors?.['pattern']">Teléfono debe tener 10
+                                dígitos</small>
+                        </div>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="address">Dirección</label>
+                        <textarea rows="5" cols="30" pInputTextarea formControlName="address"></textarea>
+                        <small *ngIf="registerForm.get('address')?.errors?.['required']">Respuesta es
+                            requerida</small>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="income">¿Cúal es su ingreso mensual?</label>
+                        <p-inputNumber formControlName="income" inputId="currency-us" mode="currency" currency="USD"
+                            locale="en-US" />
+                        <small *ngIf="registerForm.get('income')?.errors?.['required']">Respuesta es
+                            requerida</small>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="creditScore">¿Cúal es su puntuación crediticia?</label>
+                        <p-inputNumber formControlName="creditScore" inputId="minmax" mode="decimal" [min]="0"
+                            [max]="720" />
+                        <small *ngIf="registerForm.get('creditScore')?.errors?.['required']">Respuesta es
+                            requerida</small>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="securityQuestion">¿Cúal es su situación en cuestion de empleo?</label>
+                        <p-dropdown [options]="employment" optionLabel="name" formControlName="employmentStatus" placeholder="Elija una opción"></p-dropdown>
+                        <div
+                            *ngIf="registerForm.get('securityQuestion')?.invalid && registerForm.get('securityQuestion')?.touched">
+                            <small *ngIf="registerForm.get('securityQuestion')?.errors?.['required']">Pregunta
+                                requerida</small>
                         </div>
                     </div>
                     <div class="field col-12 md:col-6">
@@ -66,40 +105,35 @@
                             </ng-template>
                         </p-password>
                         <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-                            <small *ngIf="registerForm.get('password')?.errors?.['required']">Contraseña es requerida</small>
-                            <small *ngIf="registerForm.get('password')?.errors?.['minlength']">Contraseña debe tener al menos 8 caracteres</small>
-                        </div>
-                    </div>
-                    <div class="field col-12 md:col-6">
-                        <label htmlFor="confirmPassword">Ingrese de nuevo la Contraseña</label>
-                        <p-password [toggleMask]="true" [feedback]="false" (input)="checkPasswordConfirmation($event.target.value)"></p-password>
-                        <small>{{ passwordConfirmationMessage }}</small>
-                        <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched">
-                            <small *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Confirmar Contraseña es requerida</small>
-                            <small *ngIf="registerForm.errors?.['notMatching']">Las contraseñas no coinciden</small>
+                            <small *ngIf="registerForm.get('password')?.errors?.['required']">Contraseña es
+                                requerida</small>
+                            <small *ngIf="registerForm.get('password')?.errors?.['minlength']">Contraseña debe tener al
+                                menos 8 caracteres</small>
                         </div>
                     </div>
                     <div class="field col-12 md:col-6">
                         <label htmlFor="securityQuestion">Pregunta de seguridad</label>
-                        <p-dropdown [options]="securityQuestions" optionLabel="name"></p-dropdown>
-                        <div *ngIf="registerForm.get('securityQuestion')?.invalid && registerForm.get('securityQuestion')?.touched">
-                            <small *ngIf="registerForm.get('securityQuestion')?.errors?.['required']">Pregunta de seguridad es requerida</small>
+                        <p-dropdown [options]="securityQuestions" optionLabel="name" placeholder="Elija una opción"></p-dropdown>
+                        <div
+                            *ngIf="registerForm.get('securityQuestion')?.invalid && registerForm.get('securityQuestion')?.touched">
+                            <small *ngIf="registerForm.get('securityQuestion')?.errors?.['required']">Pregunta de
+                                seguridad es requerida</small>
                         </div>
                     </div>
                     <div class="field col-12 md:col-6">
                         <label htmlFor="answer">Respuesta</label>
-                        <input pInputText type="text" />
+                        <input pInputText type="text" formControlName="answer"/>
                         <div *ngIf="registerForm.get('answer')?.invalid && registerForm.get('answer')?.touched">
-                            <small *ngIf="registerForm.get('answer')?.errors?.['required']">Respuesta es requerida</small>
+                            <small *ngIf="registerForm.get('answer')?.errors?.['required']">Respuesta es
+                                requerida</small>
                         </div>
                     </div>
                     <div class="field col-12 md:col-12">
-                        <!--<div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY"></div>-->
                     </div>
                     <div class="field col-12 md:col-4">
                     </div>
                     <div class="field col-12 md:col-4">
-                        <button pButton type="submit" label="Registrarse" [disabled]="registerForm.invalid"></button>
+                        <button pButton type="submit" label="Registrarse"></button>
                     </div>
                 </div>
             </form>

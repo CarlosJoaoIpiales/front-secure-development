@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import { AuthService } from '../../../service/auth.service';
+import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-register',
     templateUrl: './register.component.html',
-    styleUrls: ['./register.component.css']
+    styleUrls: ['./register.component.css'],
+    providers: [MessageService]
 })
 export class RegisterComponent implements OnInit {
     registerForm!: FormGroup;
@@ -17,10 +20,18 @@ export class RegisterComponent implements OnInit {
         { name: '¿Cuál es el nombre de tu escuela primaria?', value: '' },
         { name: '¿Cuál es tu comida favorita?', value: '' },
     ];
+    employment= [
+        { name: 'Empleado', value: 'empleado' },
+        { name: 'Desempleado', value: 'desempleado' },
+        { name: 'Autónomo', value: 'autonomo' },
+        { name: 'Empresario', value: 'empresario' },
+        { name: 'Jubilado', value: 'jubilado' }
+    ];
+    employmentStatus = '';
     selectedSecurityQuestion = '';
     answer = '';
 
-    constructor(private fb: FormBuilder) { }
+    constructor(private fb: FormBuilder, private authService: AuthService, private messageService: MessageService, private router: Router) { }
 
     ngOnInit(): void {
         this.registerForm = this.fb.group({
@@ -29,12 +40,16 @@ export class RegisterComponent implements OnInit {
             email: ['', [Validators.required, Validators.email]],
             id: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
             phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+            address: [''],
+            income: [''],
+            creditScore: [''],
+            employmentStatus: ['', Validators.required],
             password: ['', [
                 Validators.required,
                 Validators.minLength(8),
                 Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$')
             ]],
-            /*recaptcha: ['', Validators.required]*/
+            answer: ['', Validators.required],
         });
     }
 
@@ -47,30 +62,51 @@ export class RegisterComponent implements OnInit {
             this.passwordStrengthMessage = 'Contraseña segura';
         }
     }
-    checkPasswordConfirmation(confirmPassword: string) {
-        if (this.password !== confirmPassword) {
-            this.passwordConfirmationMessage = 'Las contraseñas no coinciden';
-        } else {
-            this.passwordConfirmationMessage = '';
-        }
-    }
 
     onSubmit(): void {
         if (this.registerForm.valid) {
-            console.log('Form Values:', this.registerForm.value);
+            const registerRequest = {
+                email: this.registerForm.get('email')?.value,
+                password: this.registerForm.get('password')?.value,
+                firstName: this.registerForm.get('name')?.value,
+                lastName: this.registerForm.get('lastname')?.value,
+                idNumber: this.registerForm.get('id')?.value,
+                phoneNumber: this.registerForm.get('phone')?.value,
+                answerQuestion: this.registerForm.get('answer')?.value,
+                address: this.registerForm.get('address')?.value,
+                income: this.registerForm.get('income')?.value,
+                creditScore: this.registerForm.get('creditScore')?.value,
+                employmentStatus: this.registerForm.get('employmentStatus')?.value.value,
+                role: 'USER'
+            };
+            console.log('Register request', registerRequest);
+
+            this.authService.register(registerRequest).subscribe(
+                response => {
+                    console.log('User registered', response);
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Usuario registrado exitosamente', life: 3000 });
+                    this.router.navigate(['/auth/login']);
+                },
+                error => {
+                    console.log('Registration failed', error);
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al registrar el usuario', life: 3000 });
+                }
+            );
         } else {
             console.log('Form is invalid');
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Formulario inválido', life: 3000 });
+            this.getFormValidationErrors();
         }
-        /*if (this.registerForm.valid) {
-          this.recaptchaService.validate(this.registerForm.get('recaptcha')?.value).subscribe(valid => {
-            if (valid) {
-              this.authService.register(this.registerForm.value).subscribe(response => {
-                console.log('User registered', response);
-              });
-            } else {
-              console.log('Recaptcha validation failed');
+    }
+
+    getFormValidationErrors() {
+        Object.keys(this.registerForm.controls).forEach(key => {
+            const controlErrors = this.registerForm.get(key)?.errors;
+            if (controlErrors != null) {
+                Object.keys(controlErrors).forEach(keyError => {
+                    console.log('Key control: ' + key + ', keyError: ' + keyError + ', error value: ', controlErrors[keyError]);
+                });
             }
-          });
-        }*/
+        });
     }
 }

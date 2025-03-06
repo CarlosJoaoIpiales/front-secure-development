@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import { UserService } from '../../../service/user.service';
 import { Router } from '@angular/router';
-import { EncryptionService } from '../../../service/encryption.service';
 import { MessageService } from 'primeng/api';
+import { AuthService } from '../../../service/auth.service';
 
 @Component({
     selector: 'app-login',
@@ -24,39 +23,42 @@ export class LoginComponent {
     password: string = '';
 
     constructor(
-        private userService: UserService,
+        private authService: AuthService,
         private router: Router,
-        private encryptionService: EncryptionService,
         private messageService: MessageService,
     ) { }
 
-    login() {
-        this.router.navigate(['/user/dashboard']);
-        /*this.userService.login(this.email).subscribe(
+    login() { 
+        this.authService.login(this.email, this.password).subscribe(
             response => {
-                if (response.id && response.password) {
-                    const decryptedPassword = this.encryptionService.decrypt(response.password);
-                    if (decryptedPassword === this.password) {
-                        localStorage.setItem('userId', response.id);
-                        console.log(`User ID stored in local storage: ${response.id}`);
-                        this.router.navigate(['/dashboard']);
-                    } else {
-                        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Credenciales incorrectas', life: 3000 });
-                        alert('Credenciales incorrectas');
-                    }
+                if (response.token && response.role === 'USER') {
+                    localStorage.setItem('token', response.token);
+                    localStorage.setItem('userId', response.userId);
+                    localStorage.setItem('role', response.role);
+                    console.log(`User ID stored in local storage: ${response.userId}`);
+                    this.router.navigate(['/user/dashboard']);
+                } else if (response.role === 'ADMIN') {
+                    localStorage.setItem('token', response.token);
+                    localStorage.setItem('userId', response.userId);
+                    localStorage.setItem('role', response.role);
+                    console.log(`User ID stored in local storage: ${response.userId}`);
+                    this.router.navigate(['/admin/dashboard']);
+
                 } else {
-                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Usuario no encontrado', life: 3000 });
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Credenciales incorrectas', life: 3000 });
+                    alert('Credenciales incorrectas');
                 }
             },
             error => {
                 if (error.status === 0) {
-                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se establecer coneccion con el servidor', life: 3000 });
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo establecer conexión con el servidor', life: 3000 });
                 } else {
                     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error inesperado', life: 3000 });
                 }
             }
-        );*/
+        );
     }
+
     registerAccount() {
         this.router.navigate(['/auth/register']);
     }
