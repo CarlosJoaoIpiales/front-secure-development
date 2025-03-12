@@ -31,15 +31,16 @@
 
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="id">Código <p-sortIcon field="id"></p-sortIcon></th>
-                        <th pSortableColumn="amount">Monto <p-sortIcon field="amount"></p-sortIcon></th>
-                        <th pSortableColumn="interestRate">Intereses <p-sortIcon field="interestRate"></p-sortIcon></th>
-                        <th pSortableColumn="term">Plazo <p-sortIcon field="term"></p-sortIcon></th>
-                        <th pSortableColumn="startDate">Fecha de inicio <p-sortIcon field="startDate"></p-sortIcon></th>
-                        <th pSortableColumn="endDate">Fecha de Fin <p-sortIcon field="endDate"></p-sortIcon></th>
-                        <th pSortableColumn="approved">Estado <p-sortIcon field="approved"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="id">Código <p-sortIcon field="id"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="amount">Monto <p-sortIcon field="amount"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="endDate">Total a pagar <p-sortIcon field="totalToPay"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="interestRate">Intereses <p-sortIcon field="interestRate"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="term">Plazo <p-sortIcon field="term"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="startDate">Fecha de inicio <p-sortIcon field="startDate"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="endDate">Fecha de Fin <p-sortIcon field="endDate"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="approved">Estado <p-sortIcon field="approved"></p-sortIcon></th>
                     </tr>
-                </ng-template>
+                </ng-template>                
 
                 <ng-template pTemplate="body" let-loan>
                     <tr>
@@ -50,6 +51,10 @@
                         <td style="width:14%; min-width:10rem;">
                             <span class="p-column-title">Monto</span>
                             {{loan.amount | currency}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Total a pagar</span>
+                            {{loan.totalToPay | currency}}
                         </td>
                         <td style="width:14%; min-width:10rem;">
                             <span class="p-column-title">Intereses</span>

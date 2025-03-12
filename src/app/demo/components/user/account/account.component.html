@@ -49,10 +49,10 @@
 
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="id">Código <p-sortIcon field="id"></p-sortIcon></th>
-                        <th pSortableColumn="amount">Cantidad <p-sortIcon field="amount"></p-sortIcon></th>
-                        <th pSortableColumn="transactionDate">Fecha <p-sortIcon field="transactionDate"></p-sortIcon></th>
-                        <th pSortableColumn="description">Descripción<p-sortIcon field="description"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="id">Código <p-sortIcon field="id"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="amount">Cantidad <p-sortIcon field="amount"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="transactionDate">Fecha <p-sortIcon field="transactionDate"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="description">Descripción<p-sortIcon field="description"></p-sortIcon></th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-transaction>

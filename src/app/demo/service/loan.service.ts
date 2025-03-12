@@ -7,9 +7,9 @@ import { Loan } from '../api/loan.model';
     providedIn: 'root'
 })
 export class LoanService {
-    private apiUrl = 'http://localhost:8080/api/loans';
+    private readonly apiUrl = 'http://localhost:8080/api/loans';
 
-    constructor(private http: HttpClient) { }
+    constructor(private readonly http: HttpClient) { }
 
     getLoanCount(userId: string): Observable<number> {
         return this.http.get<number>(`${this.apiUrl}/count/${userId}`);

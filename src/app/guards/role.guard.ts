@@ -7,7 +7,7 @@ import { AuthService } from './../demo/service/auth.service';
 })
 export class RoleGuard implements CanActivate {
 
-    constructor(private authService: AuthService, private router: Router) { }
+    constructor(private readonly authService: AuthService, private readonly router: Router) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         const expectedRole = route.data['expectedRole'];

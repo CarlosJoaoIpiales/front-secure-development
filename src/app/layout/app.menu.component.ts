@@ -1,5 +1,4 @@
-import { OnInit } from '@angular/core';
-import { Component } from '@angular/core';
+import { OnInit, Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
 import { AuthService } from '../demo/service/auth.service';
 
@@ -11,7 +10,7 @@ export class AppMenuComponent implements OnInit {
 
     model: any[] = [];
 
-    constructor(public layoutService: LayoutService, private authService: AuthService,) { }
+    constructor(public layoutService: LayoutService, private readonly authService: AuthService,) { }
 
     ngOnInit() {
         const role = localStorage.getItem('role');

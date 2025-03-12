@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../api/user.model';
 
@@ -21,5 +21,14 @@ export class UserService {
 
     getUsers(): Observable<User[]> {
         return this.http.get<User[]>(this.apiUrl);
+    }
+    
+    requestPasswordRecovery(email: string): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/request-password-recovery`, { email });
+    }
+
+    verifyRecoveryCode(email: string, recoveryCode: string, newPassword: string): Observable<any> {
+        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.post(`${this.apiUrl}/verify-recovery-code`, { email, recoveryCode, newPassword }, { headers, responseType: 'text' });
     }
 }

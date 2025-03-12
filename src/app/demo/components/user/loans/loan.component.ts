@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { LoanService } from '../../../service/loan.service';
@@ -13,24 +13,24 @@ export class LoanComponent implements OnInit {
     loans: Loan[] = [];
 
     constructor(
-        private router: Router,
-        private loanService: LoanService,
-        private messageService: MessageService,
+        private readonly router: Router,
+        private readonly loanService: LoanService,
+        private readonly messageService: MessageService,
     ) { }
 
     ngOnInit() {
         const userId = localStorage.getItem('userId');
         if (userId) {
-            this.loanService.getUserLoans(userId).subscribe(
-                (loans: Loan[]) => {
+            this.loanService.getUserLoans(userId).subscribe({
+                next: (loans: Loan[]) => {
                     this.loans = loans;
                     console.log('Loans:', this.loans);
                 },
-                error => {
+                error: error => {
                     console.error('Error fetching loans', error);
                     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener los préstamos', life: 3000 });
                 }
-            );
+            });
         }
     }
 

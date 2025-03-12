@@ -12,19 +12,19 @@ export class DashboardComponent implements OnInit {
     userCount: number = 0;
 
     constructor(
-        private userService: UserService,
-        private messageService: MessageService
+        private readonly userService: UserService,
+        private readonly messageService: MessageService
     ) { }
 
     ngOnInit() {
-        this.userService.getUserCount().subscribe(
-            (count: number) => {
+        this.userService.getUserCount().subscribe({
+            next: (count: number) => {
                 this.userCount = count;
             },
-            error => {
+            error: (error) => {
                 console.error('Error fetching user count', error);
                 this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener la cantidad de usuarios', life: 3000 });
             }
-        );
+        });
     }
 }

@@ -15,7 +15,6 @@ interface AmortizationRow {
 @Component({
     selector: 'app-new-loan',
     templateUrl: './createloan.component.html',
-    styleUrls: ['./createloan.component.css'],
     providers: [MessageService]
 })
 export class CreateLoanComponent {
@@ -63,8 +62,8 @@ export class CreateLoanComponent {
     cols: any[] = [];
 
     constructor(
-        private location: Location,
-        private loanService: LoanService
+        private readonly location: Location,
+        private readonly loanService: LoanService
     ) { }
 
     onGoBack(): void {
@@ -100,15 +99,15 @@ export class CreateLoanComponent {
 
         console.log('Loan details:', loan);
 
-        this.loanService.createLoan(loan).subscribe(
-            response => {
+        this.loanService.createLoan(loan).subscribe({
+            next: response => {
                 console.log('Préstamo creado con éxito:', response);
                 this.location.back();
             },
-            error => {
+            error: error => {
                 console.error('Error al crear el préstamo:', error);
             }
-        );
+        });
     }
 
     onClear(): void {

@@ -10,7 +10,6 @@ import { Subscription } from 'rxjs';
 
 @Component({
     templateUrl: './account.component.html',
-    styleUrls: ['./account.component.css'],
     providers: [MessageService],
 })
 export class AccountComponent implements OnInit, OnDestroy {
@@ -20,42 +19,42 @@ export class AccountComponent implements OnInit, OnDestroy {
     subscription!: Subscription;
 
     constructor(
-        private layoutService: LayoutService,
-        private router: Router,
-        private messageService: MessageService,
-        private bankAccountService: BankAccountService,
-        private transactionService: TransactionService
+        private readonly layoutService: LayoutService,
+        private readonly router: Router,
+        private readonly messageService: MessageService,
+        private readonly bankAccountService: BankAccountService,
+        private readonly transactionService: TransactionService
     ) { }
 
     ngOnInit() {
         const userId = localStorage.getItem('userId');
         if (userId) {
-            this.subscription = this.bankAccountService.getUserBankAccountDetails(userId).subscribe(
-                (details: BankAccountDetails) => {
+            this.subscription = this.bankAccountService.getUserBankAccountDetails(userId).subscribe({
+                next: (details: BankAccountDetails) => {
                     this.accountNumber = details.accountNumber;
                     this.balance = details.balance;
                     console.log('Bank account details:', details);
                     this.loadTransactions(details.id);
                 },
-                error => {
+                error: error => {
                     console.error('Error fetching bank account details', error);
                     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener los detalles de la cuenta bancaria', life: 3000 });
                 }
-            );
+            });
         }
     }
 
     loadTransactions(accountNumber: string) {
-        this.subscription = this.transactionService.getTransactionsByBankAccountId(accountNumber).subscribe(
-            (transactions: Transaction[]) => {
+        this.subscription = this.transactionService.getTransactionsByBankAccountId(accountNumber).subscribe({
+            next: (transactions: Transaction[]) => {
                 this.transactions = transactions;
                 console.log('Transactions:', this.transactions);
             },
-            error => {
+            error: error => {
                 console.error('Error fetching transactions', error);
                 this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener las transacciones', life: 3000 });
             }
-        );
+        });
     }
 
     ngOnDestroy() {

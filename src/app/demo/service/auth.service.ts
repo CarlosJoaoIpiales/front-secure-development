@@ -12,14 +12,14 @@ import { Router } from '@angular/router';
 export class AuthService {
     private readonly loginApiUrl = 'http://localhost:8080/api/auth/login';
     private readonly registerApiUrl = 'http://localhost:8080/api/auth/register';
-    private maxLoginAttempts = 3;
+    private readonly maxLoginAttempts = 3;
     private loginAttempts = 0;
 
-    constructor(private http: HttpClient, private router: Router) { }
+    constructor(private readonly http: HttpClient, private readonly router: Router) { }
 
     login(email: string, password: string): Observable<AuthResponse> {
         if (this.loginAttempts >= this.maxLoginAttempts) {
-            return throwError('Máximo número de intentos alcanzado. Inténtelo más tarde.');
+            return throwError(() => new Error('Máximo número de intentos alcanzado. Inténtelo más tarde.'));
         }
 
         return this.http.post<AuthResponse>(this.loginApiUrl, { email, password }).pipe(
@@ -33,7 +33,7 @@ export class AuthService {
             }),
             catchError(error => {
                 this.loginAttempts++;
-                return throwError(error);
+                return throwError(() => error);
             })
         );
     }

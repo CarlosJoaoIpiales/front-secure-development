@@ -1,15 +1,43 @@
 <p-stepper>
-    <p-stepperPanel header=": Selecciona el prestamo que desees pagar">
+    <p-stepperPanel header=": Seleccione el método de pago que desea realizar">
         <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
             <div class="flex flex-column h-12rem">
                 <div
                     class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-                    <p-listbox [options]="loans" [(ngModel)]="selectedLoan" optionLabel="amount"
+                    <p-listbox [options]="payments" [(ngModel)]="selectedPayment" optionLabel="name"
                         [style]="{'width':'15rem'}" [listStyle]="{'max-height': '220px'}" />
                 </div>
             </div>
             <div class="flex pt-4 justify-content-end">
-                <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="nextCallback.emit()" />
+                <p-button label="Siguiente" icon="pi pi-arrow-right" iconPos="right" (onClick)="printPayment(); nextCallback.emit()" />
+            </div>
+        </ng-template>
+    </p-stepperPanel>
+    <p-stepperPanel *ngIf="selectedPayment?.value != 2" header=": Ingresa los datos de tu tarjeta de crédito o débito">
+        <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
+            <div class="flex flex-column h-12rem">
+                <div class="border-2 border-dashed surface-border border-round surface-ground justify-content-center align-items-center font-medium" style="display: flex; flex-direction: column;">
+                    <div class="field" style="display: flex; flex-direction: column;">
+                        <label htmlFor="cardNumber">Número de tarjeta</label>
+                        <input pInputText id="cardNumber" [(ngModel)]="cardNumber" type="text" />
+                    </div>
+                    <div class="field" style="display: flex; flex-direction: column;">
+                        <label htmlFor="cardName">Nombre en la tarjeta</label>
+                        <input pInputText id="cardName" [(ngModel)]="cardName" type="text" />
+                    </div>
+                    <div class="field" style="display: flex; flex-direction: column;">
+                        <label htmlFor="expiryDate">Fecha de expiración</label>
+                        <input pInputText id="expiryDate" [(ngModel)]="expiryDate" type="text" placeholder="MM/YY" />
+                    </div>
+                    <div class="field" style="display: flex; flex-direction: column;">
+                        <label htmlFor="cvv">CVV</label>
+                        <input pInputText id="cvv" [(ngModel)]="cvv" type="text" />
+                    </div>
+                </div>
+            </div>
+            <div class="flex pt-4 justify-content-between">
+                <p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+                <p-button label="Siguiente" icon="pi pi-arrow-right" iconPos="right" (onClick)="nextCallback.emit()" />
             </div>
         </ng-template>
     </p-stepperPanel>
@@ -22,16 +50,16 @@
                     <div class="border-2 border-dashed surface-border border-round surface-ground justify-content-center align-items-center font-medium" style="display: flex; flex-direction: column;">
                         <div class="field" style="display: flex; flex-direction: column;">
                             <label htmlFor="name1">¿Cuánto deseas pagar?</label>
-                            <p-inputNumber [(ngModel)]="amount" inputId="currency-us" mode="currency" currency="USD" locale="en-US" (ngModelChange)="calculateLoan()" />
-                            <small *ngIf="amount > selectedLoan?.amount" style="color: red;">El monto no puede ser mayor al monto del préstamo seleccionado</small>
-                            <small *ngIf="amount > bankAccountBalance" style="color: red;">El monto no puede ser mayor a la cantidad que tiene en la cuenta bancaria</small>
+                            <p-inputNumber [(ngModel)]="amount" inputId="currency-us" mode="currency" currency="USD" locale="en-US"/>
+                            <small *ngIf="amount >= selectedLoan.totalToPay" style="color: red;">El monto no puede ser mayor al total a pagar</small>
+                            <small *ngIf="amount > bankAccountBalance && (selectedPayment?.value != 2)" style="color: red;">El monto no puede ser mayor a la cantidad que tiene en la cuenta bancaria</small>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="flex pt-4 justify-content-between">
-                <p-button label="Back" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
-                <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="nextCallback.emit()" />
+                <p-button label="Atras" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+                <p-button label="Sigueinte" icon="pi pi-arrow-right" iconPos="right" (onClick)="calculateLoan(); nextCallback.emit()" />
             </div>
         </ng-template>
     </p-stepperPanel>
@@ -65,13 +93,13 @@
         
                         <ng-template pTemplate="header">
                             <tr>
-                                <th>Mes</th>
-                                <th>Capital</th>
-                                <th>Interés</th>
-                                <th>Seguro</th>
-                                <th>Total</th>
+                                <th scope="col">Mes</th>
+                                <th scope="col">Capital</th>
+                                <th scope="col">Interés</th>
+                                <th scope="col">Seguro</th>
+                                <th scope="col">Total</th>
                             </tr>
-                        </ng-template>
+                        </ng-template>                        
         
                         <ng-template pTemplate="body" let-row>
                             <tr>
@@ -123,12 +151,12 @@
 
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="id">Código <p-sortIcon field="id"></p-sortIcon></th>
-                        <th pSortableColumn="amount">Cantidad <p-sortIcon field="amount"></p-sortIcon></th>
-                        <th pSortableColumn="transactionDate">Fecha <p-sortIcon field="transactionDate"></p-sortIcon></th>
-                        <th pSortableColumn="description">Descripción<p-sortIcon field="description"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="id">Código <p-sortIcon field="id"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="amount">Cantidad <p-sortIcon field="amount"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="transactionDate">Fecha <p-sortIcon field="transactionDate"></p-sortIcon></th>
+                        <th scope="col" pSortableColumn="description">Descripción<p-sortIcon field="description"></p-sortIcon></th>
                     </tr>
-                </ng-template>
+                </ng-template>                
                 <ng-template pTemplate="body" let-transaction>
                     <tr>
                         <td style="width:14%; min-width:10rem;">

@@ -1,69 +1,72 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UserService } from '../../../service/user.service';
 import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-forgot-password',
     templateUrl: './forgot-password.component.html',
-    styleUrls: ['./forgot-password.component.css'],
     providers: [MessageService]
 })
 export class ForgotPasswordComponent {
-    step = 1;
-    forgotPasswordForm: FormGroup;
-    verifyCodeForm: FormGroup;
-    newPasswordForm: FormGroup;
-    emailSent = false;
+    email: string = '';
+    code: string = '';
+    passwordForm: FormGroup;
 
-    constructor(private fb: FormBuilder, private messageService: MessageService) {
-        this.forgotPasswordForm = this.fb.group({
-            email: ['', [Validators.required, Validators.email]]
-        });
-        this.verifyCodeForm = this.fb.group({
-            code: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]]
-        });
-        this.newPasswordForm = this.fb.group({
-            password: ['', [Validators.required, Validators.minLength(6)]]
-        });
+    constructor(
+        private readonly fb: FormBuilder,
+        private readonly userService: UserService,
+        private readonly messageService: MessageService,
+        private readonly router: Router
+    ) {
+        this.passwordForm = this.fb.group({
+            password: this.fb.control('', [
+                Validators.required,
+                Validators.minLength(8),
+                Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$')
+            ]),
+            password2: this.fb.control('', Validators.required)
+        }, { validators: this.passwordMatchValidator });
     }
 
-    sendCode() {
-        const email = this.forgotPasswordForm.value.email;
-        /*this.authService.sendResetCode(email).subscribe(
-            () => {
-                this.emailSent = true;
-                this.step = 2;
-                this.messageService.add({ severity: 'success', summary: 'Código Enviado', detail: 'Revisa tu correo electrónico' });
-            },
-            () => {
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo enviar el código' });
-            }
-        );*/
+    passwordMatchValidator(form: FormGroup) {
+        return form.get('password').value === form.get('password2').value ? null : { mismatch: true };
     }
 
-    verifyCode() {
-        const code = this.verifyCodeForm.value.code;
-        /*this.authService.verifyResetCode(code).subscribe(
-            (valid) => {
-                if (valid) {
-                    this.step = 3;
-                } else {
-                    this.messageService.add({ severity: 'error', summary: 'Código Incorrecto', detail: 'El código no es válido' });
+    requestPasswordRecovery() {
+        if (this.email) {
+            this.userService.requestPasswordRecovery(this.email).subscribe({
+                next: response => {
+                    console.log('Password recovery email sent:', response);
+                    this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Correo de recuperación enviado', life: 3000 });
+                },
+                error: error => {
+                    console.error('Error sending password recovery email:', error);
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al enviar el correo de recuperación', life: 3000 });
                 }
-            }
-        );*/
+            });
+        } else {
+            this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Por favor, ingrese su correo', life: 3000 });
+        }
     }
 
-    resetPassword() {
-        const password = this.newPasswordForm.value.password;
-        /*this.authService.resetPassword(password).subscribe(
-            () => {
-                this.messageService.add({ severity: 'success', summary: 'Contraseña Actualizada', detail: 'Ahora puedes iniciar sesión' });
-                this.step = 1;
-            },
-            () => {
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar la contraseña' });
-            }
-        );*/
+    verifyRecoveryCode() {
+        if (this.passwordForm.valid) {
+            const newPassword = this.passwordForm.get('password').value;
+            this.userService.verifyRecoveryCode(this.email, this.code, newPassword).subscribe({
+                next: response => {
+                    console.log('Password reset successful:', response);
+                    this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Contraseña restablecida con éxito', life: 3000 });
+                    this.router.navigate(['/auth/login']);
+                },
+                error: error => {
+                    console.error('Error verifying recovery code:', error);
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al verificar el código de recuperación', life: 3000 });
+                }
+            });
+        } else {
+            this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Por favor, complete el formulario correctamente', life: 3000 });
+        }
     }
 }

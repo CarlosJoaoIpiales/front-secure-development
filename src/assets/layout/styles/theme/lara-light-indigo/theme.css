@@ -49,25 +49,6 @@
   --highlight-bg: #EEF2FF;
   --highlight-text-color: #4338CA;
   color-scheme: light;
-}
-
-@font-face {
-  font-family: "Inter var";
-  font-weight: 100 900;
-  font-display: swap;
-  font-style: normal;
-  font-named-instance: "Regular";
-  src: url("./fonts/Inter-roman.var.woff2?v=3.19") format("woff2");
-}
-@font-face {
-  font-family: "Inter var";
-  font-weight: 100 900;
-  font-display: swap;
-  font-style: italic;
-  font-named-instance: "Italic";
-  src: url("./fonts/Inter-italic.var.woff2?v=3.19") format("woff2");
-}
-:root {
   --blue-50:#f5f9ff;
   --blue-100:#d0e1fd;
   --blue-200:#abc9fb;
@@ -1195,9 +1176,6 @@
     margin-top: -0.625rem;
     border-radius: 50%;
     transition-duration: 0.2s;
-  }
-  .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
-    transform: translateX(1.25rem);
   }
   .p-inputswitch.p-focus .p-inputswitch-slider {
     outline: 0 none;
@@ -5173,10 +5151,6 @@
     .p-menubar .p-menubar-root-list .p-submenu-list .p-menuitem-active > .p-menuitem-content > .p-menuitem-link > .p-submenu-icon {
       transform: rotate(-90deg);
     }
-    .p-menubar .p-menubar-root-list .p-menuitem {
-      width: 100%;
-      position: static;
-    }
     .p-menubar .p-menubar-root-list .p-submenu-list .p-menuitem .p-menuitem-content .p-menuitem-link {
       padding-left: 2.25rem;
     }
@@ -5447,7 +5421,6 @@
     background: transparent;
     transition: box-shadow 0.2s;
     border-radius: 6px;
-    background: #ffffff;
   }
   .p-steps .p-steps-item .p-menuitem-link .p-steps-number {
     color: #4b5563;
@@ -6111,9 +6084,6 @@
   }
   .p-chip .p-chip-icon {
     margin-right: 0.5rem;
-  }
-  .p-chip .pi-chip-remove-icon {
-    margin-left: 0.5rem;
   }
   .p-chip img {
     width: 2.25rem;

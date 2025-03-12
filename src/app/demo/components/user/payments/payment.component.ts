@@ -22,6 +22,11 @@ interface AmortizationRow {
 export class PaymentComponent implements OnInit {
 
     loans: Loan[] = [];
+    selectedPayment: any = null;
+    payments = [
+        { name: 'Efectivo', value: 1 },
+        { name: 'Tarjeta', value: 2 },
+    ];
     items: MenuItem[] = [];
     loading: boolean = true;
     selectedLoan: Loan | null = null;
@@ -46,36 +51,39 @@ export class PaymentComponent implements OnInit {
     @ViewChild('filter') filter!: ElementRef;
 
     constructor(
-        private router: Router,
-        private messageService: MessageService,
-        private loanService: LoanService,
-        private bankAccountService: BankAccountService,
-        private location: Location,
+        private readonly router: Router,
+        private readonly messageService: MessageService,
+        private readonly loanService: LoanService,
+        private readonly bankAccountService: BankAccountService,
+        private readonly location: Location,
     ) { }
 
     ngOnInit() {
         const userId = localStorage.getItem('userId');
         if (userId) {
-            this.loanService.getUserLoans(userId).subscribe(
-                (loans: Loan[]) => {
+            this.loanService.getUserLoans(userId).subscribe({
+                next: (loans: Loan[]) => {
                     this.loans = loans;
                     console.log('Loans:', this.loans);
+                    if (this.loans.length > 0) {
+                        this.selectedLoan = this.loans[0];
+                    }
                 },
-                error => {
+                error: error => {
                     console.error('Error fetching loans', error);
                     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener los préstamos', life: 3000 });
                 }
-            );
+            });
 
-            this.bankAccountService.getUserBankAccountDetails(userId).subscribe(
-                (details: BankAccountDetails) => {
+            this.bankAccountService.getUserBankAccountDetails(userId).subscribe({
+                next: (details: BankAccountDetails) => {
                     this.bankAccountBalance = details.balance;
                 },
-                error => {
+                error: error => {
                     console.error('Error fetching bank account details', error);
                     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener los detalles de la cuenta bancaria', life: 3000 });
                 }
-            );
+            });
         }
     }
 
@@ -88,6 +96,18 @@ export class PaymentComponent implements OnInit {
 
         if (this.amount > this.selectedLoan.amount || this.amount > this.bankAccountBalance) {
             this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'El monto no puede ser mayor al monto del préstamo ni mayor a la cantidad que tiene en la cuenta bancaria', life: 3000 });
+            return;
+        }
+
+        if (this.amount === this.selectedLoan.totalToPay) {
+            this.selectedLoan.amount = 0;
+            this.selectedLoan.remainingBalance = 0;
+            this.selectedLoan.monthlyPayment = 0;
+            this.selectedLoan.totalInterest = 0;
+            this.selectedLoan.totalInsurance = 0;
+            this.selectedLoan.totalToPay = 0;
+            this.amortizationTable = [];
+            this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Préstamo saldado completamente', life: 3000 });
             return;
         }
 
@@ -151,16 +171,30 @@ export class PaymentComponent implements OnInit {
 
     savePayment() {
         console.log('Paying loan...', this.selectedLoan, this.amount);
-        this.loanService.payLoan(this.selectedLoan.id!, this.amount).subscribe(
-            response => {
+        if (this.selectedPayment.value === 2) {
+            this.processPayment();
+        } else if (this.bankAccountBalance >= this.amount) {
+            this.processPayment();
+        } else {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Fondos insuficientes en la cuenta bancaria', life: 3000 });
+        }
+    }
+
+    processPayment() {
+        this.loanService.payLoan(this.selectedLoan.id, this.amount).subscribe({
+            next: response => {
                 console.log('Préstamo pagado con éxito:', response);
                 this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Préstamo pagado con éxito', life: 3000 });
                 this.location.back();
             },
-            error => {
+            error: error => {
                 console.error('Error al pagar el préstamo:', error);
                 this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al pagar el préstamo', life: 3000 });
             }
-        );
+        });
+    }
+
+    printPayment() {
+        console.log('Printing payment...', this.selectedPayment);
     }
 }

@@ -8,9 +8,9 @@ import { BankAccountDetails } from '../api/bank-account-details.model';
     providedIn: 'root'
 })
 export class BankAccountService {
-    private apiUrl = 'http://localhost:8080/api/bankaccounts';
+    private readonly apiUrl = 'http://localhost:8080/api/bankaccounts';
 
-    constructor(private http: HttpClient) { }
+    constructor(private readonly http: HttpClient) { }
 
     getUserBankAccounts(userId: string): Observable<BankAccount[]> {
         return this.http.get<BankAccount[]>(`${this.apiUrl}/user/${userId}`);

@@ -23,14 +23,14 @@ export class LoginComponent {
     password: string = '';
 
     constructor(
-        private authService: AuthService,
-        private router: Router,
-        private messageService: MessageService,
+        private readonly authService: AuthService,
+        private readonly router: Router,
+        private readonly messageService: MessageService,
     ) { }
 
     login() { 
-        this.authService.login(this.email, this.password).subscribe(
-            response => {
+        this.authService.login(this.email, this.password).subscribe({
+            next: response => {
                 if (response.token && response.role === 'USER') {
                     localStorage.setItem('token', response.token);
                     localStorage.setItem('userId', response.userId);
@@ -49,14 +49,14 @@ export class LoginComponent {
                     alert('Credenciales incorrectas');
                 }
             },
-            error => {
+            error: error => {
                 if (error.status === 0) {
                     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo establecer conexión con el servidor', life: 3000 });
                 } else {
                     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error inesperado', life: 3000 });
                 }
             }
-        );
+        });
     }
 
     registerAccount() {

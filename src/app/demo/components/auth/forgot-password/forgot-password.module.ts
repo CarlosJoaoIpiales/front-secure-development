@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
@@ -36,7 +36,8 @@ import { CardModule } from 'primeng/card';
         StepperModule,
         ListboxModule,
         InputNumberModule,
-        CardModule
+        CardModule,
+        ReactiveFormsModule
     ],
     declarations: [ForgotPasswordComponent],
     exports: [ForgotPasswordComponent],

@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 @Component({
     selector: 'app-register',
     templateUrl: './register.component.html',
-    styleUrls: ['./register.component.css'],
     providers: [MessageService]
 })
 export class RegisterComponent implements OnInit {
@@ -31,7 +30,7 @@ export class RegisterComponent implements OnInit {
     selectedSecurityQuestion = '';
     answer = '';
 
-    constructor(private fb: FormBuilder, private authService: AuthService, private messageService: MessageService, private router: Router) { }
+    constructor(private readonly fb: FormBuilder, private readonly authService: AuthService, private readonly messageService: MessageService, private readonly router: Router) { }
 
     ngOnInit(): void {
         this.registerForm = this.fb.group({
@@ -56,7 +55,7 @@ export class RegisterComponent implements OnInit {
     checkPasswordStrength(password: string) {
         if (password.length < 8) {
             this.passwordStrengthMessage = 'La contraseña es demasiado corta';
-        } else if (!/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[!@#$%^&*]/.test(password)) {
+        } else if (!/[A-Z]/.test(password) || !/\d/.test(password) || !/[!@#$%^&*]/.test(password)) {
             this.passwordStrengthMessage = 'Incluye al menos una letra mayúscula, un número y un carácter especial';
         } else {
             this.passwordStrengthMessage = 'Contraseña segura';
@@ -81,17 +80,17 @@ export class RegisterComponent implements OnInit {
             };
             console.log('Register request', registerRequest);
 
-            this.authService.register(registerRequest).subscribe(
-                response => {
+            this.authService.register(registerRequest).subscribe({
+                next: response => {
                     console.log('User registered', response);
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Usuario registrado exitosamente', life: 3000 });
                     this.router.navigate(['/auth/login']);
                 },
-                error => {
+                error: error => {
                     console.log('Registration failed', error);
                     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al registrar el usuario', life: 3000 });
                 }
-            );
+            });
         } else {
             console.log('Form is invalid');
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Formulario inválido', life: 3000 });

@@ -43,9 +43,9 @@ export class LayoutService {
         menuHoverActive: false,
     };
 
-    private configUpdate = new Subject<AppConfig>();
+    private readonly configUpdate = new Subject<AppConfig>();
 
-    private overlayOpen = new Subject<any>();
+    private readonly overlayOpen = new Subject<any>();
 
     configUpdate$ = this.configUpdate.asObservable();
 
@@ -121,16 +121,18 @@ export class LayoutService {
     changeTheme() {
         const config = this.config();
         const themeLink = <HTMLLinkElement>document.getElementById('theme-css');
-        const themeLinkHref = themeLink.getAttribute('href')!;
+        const themeLinkHref = themeLink.getAttribute('href');
         const newHref = themeLinkHref
             .split('/')
-            .map((el) =>
-                el == this._config.theme
-                    ? (el = config.theme)
-                    : el == `theme-${this._config.colorScheme}`
-                    ? (el = `theme-${config.colorScheme}`)
-                    : el
-            )
+            .map((el) => {
+                if (el === this._config.theme) {
+                    return config.theme;
+                } else if (el === `theme-${this._config.colorScheme}`) {
+                    return `theme-${config.colorScheme}`;
+                } else {
+                    return el;
+                }
+            })
             .join('/');
 
         this.replaceThemeLink(newHref);
@@ -143,7 +145,7 @@ export class LayoutService {
         cloneLinkElement.setAttribute('href', href);
         cloneLinkElement.setAttribute('id', id + '-clone');
 
-        themeLink.parentNode!.insertBefore(
+        themeLink.parentNode.insertBefore(
             cloneLinkElement,
             themeLink.nextSibling
         );

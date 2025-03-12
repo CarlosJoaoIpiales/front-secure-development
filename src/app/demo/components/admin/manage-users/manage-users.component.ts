@@ -6,8 +6,8 @@ import { UserService } from '../../../service/user.service';
 import { User } from '../../../api/user.model';
 
 @Component({
+    selector: 'app-manage-users',
     templateUrl: './manage-users.component.html',
-    styleUrls: ['./manage-users.component.css'],
     providers: [MessageService],
 })
 export class ManageUsersComponent implements OnInit, OnDestroy {
@@ -15,22 +15,22 @@ export class ManageUsersComponent implements OnInit, OnDestroy {
     subscription!: Subscription;
 
     constructor(
-        private router: Router,
-        private userService: UserService,
-        private messageService: MessageService
+        private readonly router: Router,
+        private readonly userService: UserService,
+        private readonly messageService: MessageService
     ) { }
 
     ngOnInit() {
-        this.subscription = this.userService.getUsers().subscribe(
-            (users: User[]) => {
+        this.subscription = this.userService.getUsers().subscribe({
+            next: (users: User[]) => {
                 this.users = users;
                 console.log('Users:', this.users);
             },
-            error => {
+            error: error => {
                 console.error('Error fetching users', error);
                 this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener los usuarios', life: 3000 });
             }
-        );
+        });
     }
 
     ngOnDestroy() {
