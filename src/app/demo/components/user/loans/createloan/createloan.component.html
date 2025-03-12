@@ -1,5 +1,6 @@
 <div class="grid">
     <div class="col-12">
+        <p-toast></p-toast>
         <div class="card">
             <h5 style="color: #005BA8; font-weight: bold;">Solicitar un Prestamo</h5>
             <p-toast></p-toast>
@@ -26,7 +27,7 @@
                         <p-inputNumber [(ngModel)]="amount" inputId="currency-us" mode="currency" currency="USD"
                             locale="en-US" (onChange)="calculateLoan()" />
                         <small>Min. $300,00</small>
-                        <small *ngIf="amount > 60000" style="color: red;">Tu monto debe ser menor a $60.000,00</small>
+                        <small *ngIf="amount > user.max_loan_amount" style="color: red;">Tu monto debe ser menor a ${{user.max_loan_amount}}</small>
                     </div>
                     <div class="field">
                         <label htmlFor="email1">¿En cuanto tiempo quieres pagarlo?</label>

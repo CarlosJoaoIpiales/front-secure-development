@@ -9,4 +9,5 @@ export interface User {
     created_at?: string;
     role: string;
     phone_number: string;
+    max_loan_amount: number;
 }

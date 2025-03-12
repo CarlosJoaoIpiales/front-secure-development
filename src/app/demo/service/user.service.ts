@@ -7,9 +7,9 @@ import { User } from '../api/user.model';
     providedIn: 'root'
 })
 export class UserService {
-    private apiUrl = 'http://localhost:8080/api/users';
+    private readonly apiUrl = 'http://localhost:8080/api/users';
 
-    constructor(private http: HttpClient) { }
+    constructor(private readonly http: HttpClient) { }
 
     getUserById(userId: string): Observable<User> {
         return this.http.get<User>(`${this.apiUrl}/${userId}`);

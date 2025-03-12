@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { LoanService } from '../../../../service/loan.service';
+import { UserService } from '../../../../service/user.service';
 import { Loan } from '../../../../api/loan.model';
+import { User } from '../../../../api/user.model';
 
 interface AmortizationRow {
     month: number;
@@ -17,8 +19,7 @@ interface AmortizationRow {
     templateUrl: './createloan.component.html',
     providers: [MessageService]
 })
-export class CreateLoanComponent {
-
+export class CreateLoanComponent implements OnInit {
     amount: number = 0;
     termSelect: any = null;
     createLoanDialog: boolean = false;
@@ -60,11 +61,30 @@ export class CreateLoanComponent {
     amortizationTable: AmortizationRow[] = [];
     value: string = '';
     cols: any[] = [];
+    user: User | null = null;
 
     constructor(
         private readonly location: Location,
-        private readonly loanService: LoanService
+        private readonly loanService: LoanService,
+        private readonly userService: UserService,
+        private readonly messageService: MessageService
     ) { }
+
+    ngOnInit() {
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            this.userService.getUserById(userId).subscribe({
+                next: (user: User) => {
+                    this.user = user;
+                    console.log('User:', this.user);
+                },
+                error: error => {
+                    console.error('Error fetching user details', error);
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener los detalles del usuario', life: 3000 });
+                }
+            });
+        }
+    }
 
     onGoBack(): void {
         this.location.back();
@@ -73,6 +93,13 @@ export class CreateLoanComponent {
     onSave(): void {
         if (!this.amount || !this.termSelect || !this.amortizationMethod) {
             console.error('Faltan campos obligatorios');
+            this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Faltan campos obligatorios', life: 3000 });
+            return;
+        }
+
+        if (this.user && this.amount > this.user.max_loan_amount) {
+            console.error('El monto del préstamo excede el máximo permitido para el usuario');
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El monto del préstamo excede el máximo permitido para el usuario', life: 3000 });
             return;
         }
 
@@ -93,7 +120,7 @@ export class CreateLoanComponent {
             totalInsurance: this.totalInsurance,
             totalToPay: this.totalToPay,
             user: {
-                id: localStorage.getItem('userId') || '0'
+                id: this.user?.id || '0'
             }
         };        
 
@@ -102,10 +129,12 @@ export class CreateLoanComponent {
         this.loanService.createLoan(loan).subscribe({
             next: response => {
                 console.log('Préstamo creado con éxito:', response);
+                this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Préstamo creado con éxito', life: 3000 });
                 this.location.back();
             },
             error: error => {
                 console.error('Error al crear el préstamo:', error);
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al crear el préstamo', life: 3000 });
             }
         });
     }
