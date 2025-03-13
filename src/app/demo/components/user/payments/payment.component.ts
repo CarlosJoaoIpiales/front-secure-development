@@ -25,7 +25,7 @@ export class PaymentComponent implements OnInit {
     selectedPayment: any = null;
     payments = [
         { name: 'Efectivo', value: 1 },
-        { name: 'Tarjeta', value: 2 },
+        { name: 'Tarjetade crédito/débito', value: 2 },
     ];
     items: MenuItem[] = [];
     loading: boolean = true;

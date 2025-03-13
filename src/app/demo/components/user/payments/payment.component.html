@@ -13,9 +13,9 @@
             </div>
         </ng-template>
     </p-stepperPanel>
-    <p-stepperPanel *ngIf="selectedPayment?.value != 2" header=": Ingresa los datos de tu tarjeta de crédito o débito">
+    <p-stepperPanel header=": Ingresa los datos de tu tarjeta de crédito o débito">
         <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
-            <div class="flex flex-column h-12rem">
+            <div class="flex flex-column h-12rem" *ngIf="selectedPayment?.value == 2">
                 <div class="border-2 border-dashed surface-border border-round surface-ground justify-content-center align-items-center font-medium" style="display: flex; flex-direction: column;">
                     <div class="field" style="display: flex; flex-direction: column;">
                         <label htmlFor="cardNumber">Número de tarjeta</label>
@@ -32,6 +32,14 @@
                     <div class="field" style="display: flex; flex-direction: column;">
                         <label htmlFor="cvv">CVV</label>
                         <input pInputText id="cvv" [(ngModel)]="cvv" type="text" />
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-column h-12rem" *ngIf="selectedPayment?.value == 1">
+                <div class="border-2 border-dashed surface-border border-round surface-ground justify-content-center align-items-center font-medium" style="display: flex; flex-direction: column;">
+                    <div class="field" style="display: flex; flex-direction: column;">
+                        <label htmlFor="cardNumber">Cantidad de Dinero en tu cuenta</label>
+                        <input pInputText id="cardNumber" [(ngModel)]="bankAccountBalance" type="text" [disabled]="true"/>
                     </div>
                 </div>
             </div>
